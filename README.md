@@ -7,3 +7,4 @@ Libraries used (and soon in use) :
  - SFGUI, a GUI library for SFML
  - (soon) libtiled for parsing map files (created with Tiled map editor)
  
+Note : code is full of mistakes, and hasn't been tested at all. Classes are not complete and nothing runs.
