@@ -8,5 +8,13 @@
 #define DEFAULT_UDP_PORT 1662
 #define DEFAULT_TCP_PORT 1662
 
+#define DEFAULT_MAP_TILEWIDTH 300
+#define DEFAULT_MAP_TILEHEIGHT 300
+
+#define DEFAULT_TILE_XWIDTH 0.25 //0.25 * OpenGL's default X
+#define DEFAULT_TILE_ZHEIGHT 0.25 //same here for Y
+
+static int SCREEN_WIDTH = 640;
+static int SCREEN_HEIGHT = 480;
 
 #endif /* SRC_COMMON_CONSTS_H_ */

@@ -5,19 +5,29 @@
 #include <iostream>
 #include <vector>
 #include "entities/entity.h"
+#include "../map/world.h"
 
 namespace Objects {
 	class Object {
 		public:
-			Object(int mapX, int mapY, int heightZ, std::string name, GameEntityManager *entManager);
+			Object(float mapX, float mapY, int heightZ, std::string name, GameEntityManager *entManager, World::GameMap *map);
 			virtual void update() = 0; //pure virtual method, Object is an abstract class
 			virtual ~Object();
+			float getBasicDamage() const;
+			float getDefense() const;
+			int getHeightZ() const;
+			float getLife() const;
+			float getMana() const;
+			float getMapX() const;
+			float getMapY() const;
+			const std::string& getName() const;
 		private:
 			float mapX, mapY;
 			int heightZ;
 			std::string name;
-			float life, defense, mana, basicDamage;
+			float life = 10, defense = 10, mana = 0, basicDamage = 1;
 			GameEntityManager *entManager;
+			World::GameMap *map;
 	};
 
 

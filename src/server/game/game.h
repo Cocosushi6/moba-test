@@ -8,7 +8,7 @@ namespace Game {
 	class Game {
 		public:
 			Game(Net::Server::Server *server);
-			int addObject(Object obj);
+			int addObject(Objects::Object *obj);
 		private:
 
 

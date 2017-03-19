@@ -9,17 +9,25 @@ namespace Objects {
 
 		class Entity : public Object {
 			public:
-				Entity(float mapX, float mapY, int layerZ);
+				Entity(float mapX, float mapY, int layerZ, std::string name, GameEntityManager *entManager, World::GameMap *map);
 				virtual void update() = 0;
 				virtual void move(float mapX, float mapY, int layerZ) = 0;
 				virtual ~Entity();
 			private:
-
-
+				float newX = 0, newY = 0, newZ = 0;
+				float angle = 0;
+				bool moving = false;
+				World::GameMap *map;
 		};
 
 		//basic implementation of Entity
 		class MovingEntity : public Entity {
+			public:
+				MovingEntity(float mapX, float mapY, int layerZ);
+				void update();
+				void move(float mapX, float mapY, int layerZ);
+				~MovingEntity();
+			private:
 
 		};
 

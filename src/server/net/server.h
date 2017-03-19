@@ -1,7 +1,7 @@
 #ifndef SRC_SERVER_NET_SERVER_H_
 #define SRC_SERVER_NET_SERVER_H_
 
-#include "../../common/game/game.h"
+#include "../../common/game.h"
 #include "SFML/Network.hpp"
 #include <vector>
 #include <string>
@@ -12,7 +12,7 @@ using namespace sf;
 namespace Net {
 	class Server {
 		public:
-			Server(int tcpPort, int udpPort, Game::Game *game); //impl
+			Server(int tcpPort, int udpPort, Game *game); //impl
 			int sendTCPPacket(int clientID, Packet packet); //impl
 			int sendUDPPacket(int clientID, Packet packet); //impl
 			int waitUDP();
