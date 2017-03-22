@@ -7,6 +7,7 @@ using namespace std;
 
 void initGL();
 
+
 Client client;
 Game game;
 GamePacket::PacketParser parser;

@@ -23,11 +23,12 @@ namespace World {
 
 	class MapGrid {
 		public:
-			MapGrid(); //load this one by getting Map's pathToTmx file with getter
-			MapGrid(std::string data);
+			MapGrid(bool remote); //load this one by getting Map's pathToTmx file with getter
+			MapGrid(std::string data, bool remote);
 			int parseMap();
 			~MapGrid();
 		private:
+			int generateTiles();
 			pugi::xml_document tmxFile;
 			std::vector<std::vector<Tile>> tiles;
 	};
