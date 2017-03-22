@@ -35,10 +35,9 @@ namespace Objects {
 			public:
 				void update();
 				void move(float mapX, mapY, int layerZ);
-				void attack();
+				void useWeapon();
 			private:
-
-
+				
 		};
 
 	}

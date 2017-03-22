@@ -49,7 +49,8 @@ void Net::Server::waitForClient() {
 int Net::Server::sendTCPPacket(int clientID, Packet packet) {
 	TcpSocket *out = this->m_clientManager.getClient(clientID).getOutputSocket();
 
-	if(out->send(packet) != Socket::Done) {
+	sf::Socket::Status status =  out->send(packet);
+	if(status != Socket::Done) {
 		cout << "Error while sending TCP packet to client with id " << clientID << endl;
 		return SRV_SEND_TCP_FAIL;
 	}
