@@ -9,12 +9,11 @@ namespace Weapons {
     
     class Weapon {
         public:
-            Weapon(Entity *carrier);
+            Weapon(Objects::Entities::Entity *carrier);
             void use();
         private:
-             
-            Entity *carrier;
-    }
+            Objects::Entities::Entity *carrier;
+    };
     
 }
 
