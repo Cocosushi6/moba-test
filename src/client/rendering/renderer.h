@@ -9,16 +9,23 @@
 #define SRC_CLIENT_RENDERING_RENDERER_H_
 
 #include "../../common/map/world.h"
+#include "model.h"
+#include "../../common/objects/object.h"
 
 namespace Rendering {
 
 	class Renderer {
 		public:
-			Renderer();
-			void renderMap(World::GameMap *map);
+			Renderer(World::GameMap *map, Objects::GameEntityManager *manager);
+			void renderMap();
 			void renderObjects();
 		private:
 			void initGL();
+			void addEntityModel(int id, Model *model);
+			
+			World::GameMap *map;
+			Objects::GameEntityManager *manager;
+			std::map<int, *Model> entityModels;
 	};
 	
 		
