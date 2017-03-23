@@ -12,7 +12,6 @@ namespace Weapons {
             Weapon(Entity *carrier);
             void use();
         private:
-             
             Entity *carrier;
     }
     

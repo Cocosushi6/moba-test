@@ -17,8 +17,11 @@ namespace Rendering {
 			Renderer();
 			void renderMap(World::GameMap *map);
 			void renderObjects();
+		private:
+			void initGL();
 	};
-
+	
+		
 }
 
 

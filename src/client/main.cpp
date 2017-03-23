@@ -11,6 +11,7 @@ void initGL();
 Client client;
 Game game;
 GamePacket::PacketParser parser;
+Renderer renderer;
 
 bool initDone = false;
 static int SCREEN_WIDTH = 640;
@@ -18,7 +19,8 @@ static int SCREEN_HEIGHT = 480;
 
 int main() {
 	client(sf::IpAddress("127.0.0.1"), 1662, 1662, &parser);
-
+	game(); //todo
+	renderer(); //todo
 
 
 	return 0;
