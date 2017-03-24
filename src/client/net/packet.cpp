@@ -1,11 +1,13 @@
 #include "packet.h"
 #include "../../common/utils.h"
 
-PacketParser::PacketParser(Game *game) : game(game) {
+using namespace std;
+
+GamePacket::PacketParser::PacketParser(Game *game) : game(game) {
         
 }
 
-int PacketParser:parsePacket(sf::Packet packet) {
+int GamePacket::PacketParser::parsePacket(sf::Packet packet) {
     std::string descriptor;
     if(!packet >> descriptor) {
         cout << "No descriptor in packet, discarding" << endl;
@@ -20,8 +22,9 @@ int PacketParser:parsePacket(sf::Packet packet) {
         }
     }
     
+    return 0;
 }
 
-PacketParser::~PacketParser() {
+GamePacket::PacketParser::~PacketParser() {
     delete game;
 }

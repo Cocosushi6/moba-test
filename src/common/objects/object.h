@@ -10,8 +10,8 @@
 namespace Objects {
 	class Object {
 		public:
-			Object(float mapX, float mapY, int heightZ, std::string name, GameEntityManager *entManager, World::GameMap *map);
-			virtual void update() = 0; //pure virtual method, Object is an abstract class
+			Object(float mapX, float mapY, int heightZ, std::string name, GameEntityManager *entManager, World::GameMap *map, bool remote);
+			virtual void update(long tickrate) = 0; //pure virtual method, Object is an abstract class
 			virtual ~Object();
 			float getBasicDamage() const;
 			float getDefense() const;
@@ -22,9 +22,10 @@ namespace Objects {
 			float getMapY() const;
 			const std::string& getName() const;
 		private:
+			bool remote = false;
 			float mapX, mapY;
 			int heightZ;
-			std::string name;
+			std::string name; //name is important : paths to 3D models are build according to this name
 			float life = 10, defense = 10, mana = 0, basicDamage = 1;
 			GameEntityManager *entManager;
 			World::GameMap *map;

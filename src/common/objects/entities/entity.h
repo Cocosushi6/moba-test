@@ -9,15 +9,16 @@ namespace Objects {
 
 		class Entity : public Object {
 			public:
-				Entity(float mapX, float mapY, int layerZ, std::string name, GameEntityManager *entManager, World::GameMap *map);
-				virtual void update() = 0;
-				virtual void move(float mapX, float mapY, int layerZ) = 0;
+				Entity(float mapX, float mapY, int layerZ, std::string name, GameEntityManager *entManager, World::GameMap *map, bool remote);
+				virtual void update(long tickrate) = 0;
+				virtual void move(float mapX, float mapY, int layerZ) = 0; //sets newX, newY and newZ variables
 				virtual ~Entity();
 			private:
+				void step(float speed);
 				float newX = 0, newY = 0, newZ = 0;
 				float angle = 0;
+				float velocity = 0;
 				bool moving = false;
-				World::GameMap *map;
 		};
 
 		//basic implementation of Entity
@@ -36,8 +37,10 @@ namespace Objects {
 				void update();
 				void move(float mapX, mapY, int layerZ);
 				void useWeapon();
+				~Player();
 			private:
-				
+				Weapons::Weapon *weapon;
+
 		};
 
 	}
