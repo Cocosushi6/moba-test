@@ -1,13 +1,22 @@
 #include "renderer.h"
 
 //OpenGL headers TODO
-Rendering::Renderer::Renderer(World::GameMap *map, Objects::GameEntityManager *manager) {
-    this->map = map;
-    this->manager = manager;
-    init();
+Rendering::Renderer::Renderer(sf::Window *window, World::GameMap *map, Game *game) {
+    this->window = window;
+	this->map = map;
+    this->manager = game->getEntityManager();
+    this->init();
 }
 
-Rendering::Renderer::addEntityModel(int id, Model *model) {
+void Rendering::Renderer::renderMap() {
+
+}
+
+void Rendering::Renderer::init() {
+
+}
+
+void Rendering::Renderer::addEntityModel(int id, Model *model) {
         entityModels[id] = model;
 }
 

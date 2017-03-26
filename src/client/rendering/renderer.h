@@ -16,13 +16,14 @@ namespace Rendering {
 
 	class Renderer {
 		public:
-			Renderer(World::GameMap *map, Objects::GameEntityManager *manager);
+			Renderer(sf::Window *window, World::GameMap *map, Game *game);
 			void renderMap();
 			void renderObjects();
 		private:
-			void initGL();
+			void init();
 			void addEntityModel(int id, Model *model);
 			
+			sf::Window *window;
 			World::GameMap *map;
 			Objects::GameEntityManager *manager;
 			std::map<int, *Model> entityModels;

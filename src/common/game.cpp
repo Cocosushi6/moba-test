@@ -11,4 +11,6 @@ bool Game::isRemote() {
 	return remote;
 }
 
-
+Objects::GameEntityManager Game::getEntityManager() {
+	return entityManager;
+}

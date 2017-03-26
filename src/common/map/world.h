@@ -42,6 +42,7 @@ namespace World {
 			std::string path;
 			MapGrid *grid;
 			Model *model;
+			bool initDone = false;
 	};
 
 }

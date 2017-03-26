@@ -2,6 +2,8 @@
 #define SRC_COMMON_OBJECTS_ENTITIES_ENTITY_H_
 
 #include "../object.h"
+#include "../../weapons/weapons.h"
+#include <string>
 
 namespace Objects {
 

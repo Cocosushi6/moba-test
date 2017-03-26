@@ -38,12 +38,12 @@ void Client::poll() {
 	if(udpSocket.receive(dataPacket, sender, senderPort) != (Socket::Done || Socket::NotReady)) {
 		cout << "Error while receiving UDP packet" << endl;
 	}
-	packetParser->parse(dataPacket);
+	packetParser->parsePacket(dataPacket);
 
 	if(tcpSocket.receive(dataPacket) != (Socket::Done || Socket::NotReady)) {
 		cout << "Error while reading TCP packet" << endl;
 	}
-	packetParser->parse(dataPacket);
+	packetParser->parsePacket(dataPacket);
 }
 
 int Client::sendTCPPacket(Packet packet) {
