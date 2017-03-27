@@ -19,7 +19,6 @@ Client client;
 GamePacket::PacketParser parser;
 
 Game game;
-World::GameMap map;
 bool initDone = false;
 
 Rendering::Renderer renderer;
@@ -27,11 +26,10 @@ sf::Window window;
 
 int main() {
 	initWindow();
-	parser(&game, &map);
+	parser(&game);
 	client(sf::IpAddress("127.0.0.1"), 1662, 1662, &parser);
-
-	game(true, &map); //Constructor TODO
-
+		
+	
 	renderer(&window, &map, &game); //Constructor TODO
 
 

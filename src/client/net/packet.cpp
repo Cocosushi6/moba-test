@@ -4,7 +4,7 @@
 using namespace std;
 
 GamePacket::PacketParser::PacketParser(Game *game) : game(game) {
-        
+        this->map = game->getMap();
 }
 
 int GamePacket::PacketParser::parsePacket(sf::Packet packet) {

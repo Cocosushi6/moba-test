@@ -21,12 +21,22 @@ int Client::connect() {
 		std::cout << "Failed to connect tcp socket ! Aborting." << std::endl;
 		return -1;
 	}
-	tcpSocket.setBlocking(false);
+
 
 	if(udpSocket.bind(tcpPort) != Socket::Done) {
 		std::cout << "Failed to bind udp socket ! Aborting. " << std::endl;
 		return -1;
+	}	
+	
+	//receive game data from server
+	if(tcpSocket.receive(dataPacket) != Socket::Done) {
+		cout << "Error while receiving initialisation packet" << endl;
+		return -1;
 	}
+	packetParser->parse(dataPacket);
+	
+	//then, set sockets to non blocking
+	tcpSocket.setBlocking(false);
 	udpSocket.setBlocking(false);
 
 	return 0;

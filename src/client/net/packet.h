@@ -8,7 +8,7 @@ namespace GamePacket {
 
 	class PacketParser {
 		public:
-			PacketParser(Game &game, World::GameMap &map);
+			PacketParser(Game *game);
 			int parsePacket(sf::Packet packet);
 			~PacketParser();
 		private:

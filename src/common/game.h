@@ -5,15 +5,16 @@
 
 class Game {
 	public:
-		Game(bool remote, World::GameMap *map);
+		Game(bool remote, World::GameMap map);
 		~Game();
 		void init();
 		bool isRemote();
 		Objects::GameEntityManager getEntityManager();
+		World::GameMap getMap();
 	private:
-		//Remote is true if the game is located in a client instance, and is false if the game is located in a server instance
+		//Remote is true if the game is located in a client instance, and is false if the game is located in a server instance (game is then local)
 		bool remote = true;
 		bool initDone = false;
-		World::GameMap *map = 0;
+		World::GameMap map;
 		Objects::GameEntityManager entityManager;
 };

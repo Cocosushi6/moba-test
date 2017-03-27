@@ -2,7 +2,7 @@
 #include "game.h"
 #include <string>
 
-Game::Game(bool remote, World::GameMap *map) {
+Game::Game(bool remote, World::GameMap map) {
   this->map = map;
   this->remote = remote;
 }
@@ -13,4 +13,8 @@ bool Game::isRemote() {
 
 Objects::GameEntityManager Game::getEntityManager() {
 	return entityManager;
+}
+
+World::GameMap getMap() {
+    return this->map;
 }
