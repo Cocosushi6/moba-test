@@ -25,13 +25,26 @@ Rendering::Renderer renderer;
 sf::Window window;
 
 int main() {
+	
 	initWindow();
+	
 	parser(&game);
 	client(sf::IpAddress("127.0.0.1"), 1662, 1662, &parser);
-		
 	
 	renderer(&window, &map, &game); //Constructor TODO
-
+	
+	//game loop
+	while(window.isOpen()) {
+		
+		//event loop
+		sf::Event ev;
+		while(window.pollEvent(ev)) {
+			
+		}
+		
+		
+		//now, render.
+	}
 
 	return 0;
 }
