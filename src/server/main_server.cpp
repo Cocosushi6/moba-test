@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "net/server.h"
-#include "game/game.h"
+#include "../common/game.h"
 
 using namespace std;
 using namespace sf;
@@ -11,6 +11,7 @@ Server server;
 
 int main() {
 	server(45612, 45612, &game);
+
 
 
 	return 0;

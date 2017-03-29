@@ -1,5 +1,6 @@
 #include "packet.h"
 #include "../../common/utils.h"
+#include "/usr/include/SFML/Network.hpp"
 
 using namespace std;
 
@@ -20,6 +21,8 @@ int GamePacket::PacketParser::parsePacket(sf::Packet packet) {
             cout << "Wrong descriptor, no inputState in packet with descriptor " << descriptor << endl;
             return -1;
         }
+    } else if(descriptor == "INIT") {
+
     }
     
     return 0;

@@ -6,7 +6,6 @@
 #include <vector>
 
 #include "tmxlite/Map.hpp"
-#include "rendering/model.h"
 #include "pugixml.hpp"
 
 
@@ -41,7 +40,6 @@ namespace World {
 		private:
 			std::string path;
 			MapGrid *grid;
-			Model *model;
 			bool initDone = false;
 	};
 

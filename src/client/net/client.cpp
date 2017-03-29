@@ -33,7 +33,7 @@ int Client::connect() {
 		cout << "Error while receiving initialisation packet" << endl;
 		return -1;
 	}
-	packetParser->parse(dataPacket);
+	packetParser->parsePacket(dataPacket);
 	
 	//then, set sockets to non blocking
 	tcpSocket.setBlocking(false);

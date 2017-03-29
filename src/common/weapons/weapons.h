@@ -1,7 +1,13 @@
-#ifndef SRC_WEAPON_H define SRC_WEAPON_H
+#ifndef SRC_WEAPON_H 
+#define SRC_WEAPON_H
+
 #include <iostream>
 #include <string>
 #include <vector>
+
+#include "../objects/object.h"
+
+
 namespace Weapons {
     
     class Weapon {
@@ -14,3 +20,4 @@ namespace Weapons {
     
 }
 #endif /* SRC_WEAPON_H */
+
