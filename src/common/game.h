@@ -1,7 +1,11 @@
+#ifndef SRC_GAME_H
+#define SRC_GAME_H
+
 #include <iostream>
 #include "SFML/Network.hpp"
-#include "../common/objects/object.h"
-#include "../common/map/world.h"
+#include "objects/object.h"
+#include "entity_manager.h"
+#include "map/world.h"
 
 class Game {
 	public:
@@ -18,3 +22,5 @@ class Game {
 		World::GameMap map;
 		Objects::GameEntityManager entityManager;
 };
+
+#endif /* SRC_GAME_H */

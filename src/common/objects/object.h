@@ -4,10 +4,12 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include "entities/entity.h"
+
 #include "../map/world.h"
 
 namespace Objects {
+	class GameEntityManager;
+
 	class Object {
 		public:
 			Object(float mapX, float mapY, int heightZ, std::string name, GameEntityManager *entManager, World::GameMap *map, bool remote);
@@ -21,7 +23,7 @@ namespace Objects {
 			float getMapX() const;
 			float getMapY() const;
 			const std::string& getName() const;
-		private:
+		protected:
 			bool remote = false;
 			float mapX, mapY;
 			int heightZ;
@@ -31,15 +33,6 @@ namespace Objects {
 			World::GameMap *map;
 	};
 
-
-	class GameEntityManager {
-		public:
-			void addEntity(int id, Entities::Entity* ent);
-			Entities::Entity* getEntity(int id);
-		private:
-			std::map<int, Object> objects;
-			std::map<int, Entities::Entity*> entities;
-	};
 }
 
 

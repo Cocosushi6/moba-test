@@ -11,6 +11,7 @@ class Client {
 		int sendTCPPacket(sf::Packet packet);
 		int sendUDPPacket(sf::Packet packet);
 		void poll();
+		void setServerAddress(sf::IpAddress address);
 	private:
 		sf::UdpSocket udpSocket;
 		sf::TcpSocket tcpSocket;

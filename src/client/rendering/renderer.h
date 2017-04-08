@@ -11,6 +11,8 @@
 #include "../../common/map/world.h"
 #include "model.h"
 #include "../../common/objects/object.h"
+#include "../../common/objects/entities/entity.h"
+
 
 namespace Rendering {
 
@@ -22,7 +24,8 @@ namespace Rendering {
 		private:
 			void init();
 			void addEntityModel(int id, Model *model);
-			
+		    void renderEntity(Objects::Entities::Entity *ent);
+				
 			sf::Window *window;
 			World::GameMap *map;
 			Objects::GameEntityManager *manager;

@@ -16,6 +16,6 @@ Objects::GameEntityManager Game::getEntityManager() {
 	return entityManager;
 }
 
-World::GameMap getMap() {
-    return this->map;
+World::GameMap Game::getMap() {
+	return this->map;
 }

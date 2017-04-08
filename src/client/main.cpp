@@ -1,11 +1,19 @@
 #include <iostream>
-#include "SFML/Network.hpp"
-#include "../common/game.h"
-#include "SFML/OpenGL.hpp"
-#include "SFML/Window.hpp"
+
+#define GLEW_STATIC
+#include <GL/glew.h>
+
+#include <SFML/Network.hpp>
+#include <SFML/OpenGL.hpp>
+#include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
+#include <TGUI/TGUI.hpp>
 #include "net/packet.h"
+#include "net/client.h"
 #include "rendering/renderer.h"
 #include "../common/map/world.h"
+#include "../common/game.h"
+#include "utils/utils.h"
 
 using namespace std;
 
@@ -21,36 +29,58 @@ GamePacket::PacketParser parser;
 Game game;
 bool initDone = false;
 
+
 Rendering::Renderer renderer;
-sf::Window window;
+sf::RenderWindow window;
+tgui::Gui gui;
+
 
 int main() {
-	
 	initWindow();
 	
-	parser(&game);
-	client(sf::IpAddress("127.0.0.1"), 1662, 1662, &parser);
-	
+	gui(window);
+
 	renderer(&window, &map, &game); //Constructor TODO
-	
 	//game loop
 	while(window.isOpen()) {
-		
+
 		//event loop
+
 		sf::Event ev;
 		while(window.pollEvent(ev)) {
-			
+			if(ev.type == sf::Event::Closed) {
+				window.close();
+			}
+
+			gui.handleEvent(ev);
 		}
-		
-		
-		//now, render.
+
+		window.clear();
+		gui.draw();
+		window.display();
 	}
 
 	return 0;
 }
 
-void drawMenu() {
+void connectCallback(sf::IpAddress ipAddress) {
+	client.setServerAddress(ipAddress);
+	client.connect();
+}
 
+void drawMenu() {
+	tgui::TextBox::Ptr ipAddress = tgui::TextBox::create();
+	tgui::Button::Ptr connectButton = tgui::Button::create("Connect to server");
+
+	ipAddress->setSize(300, 40);
+	ipAddress->setPosition(window.getSize().x / 2 - ipAddress->getSize().x / 2, window.getSize().y / 2 - ipAddress->getSize().y / 2);
+	connectButton->setPosition(window.getSize().x / 2, window.getSize().y / 2 + 30);
+
+	gui.add(ipAddress, "ipAddress");
+	gui.add(connectButton, "connectButton");
+
+	sf::IpAddress address(ipAddress->getText());
+	connectButton->connect("pressed", connectCallback, address);
 }
 
 void initWindow() {
@@ -62,5 +92,4 @@ void initWindow() {
 	settings.minorVersion = 3;
 
 	window.create(sf::VideoMode(1024, 720), "OpenGL", sf::Style::Default, settings);
-
 }

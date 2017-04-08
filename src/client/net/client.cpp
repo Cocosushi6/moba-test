@@ -4,11 +4,11 @@
 
 #include "client.h"
 #include "packet.h"
-#include "consts.h"
+#include "../../common/consts.h"
 
 using namespace sf;
 using namespace std;
-using namespace Packet;
+using namespace GamePacket;
 
 Client::Client(IpAddress address, int udpPort, int tcpPort, GamePacket::PacketParser *parser) : serverAddress(address), udpPort(udpPort), tcpPort(tcpPort), packetParser(parser) {
 
@@ -75,3 +75,8 @@ int Client::sendUDPPacket(Packet packet) {
 	}
 	return 0;
 }
+
+void Client::setServerAddress(sf::IpAddress address) {
+	serverAddress = address;
+}
+

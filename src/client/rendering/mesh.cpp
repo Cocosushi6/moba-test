@@ -1,7 +1,8 @@
-#include <iostream>
-// Include GLEW
+//include GLEW
+#define GLEW_STATIC
 #include <GL/glew.h>
 
+#include <iostream>
 // Include GLFW
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>

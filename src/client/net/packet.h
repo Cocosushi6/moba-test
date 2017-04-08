@@ -3,7 +3,7 @@
 
 #include "../../common/map/world.h"
 #include "../../common/game.h"
-#include "SFML/Network.hpp"
+#include <SFML/Network.hpp>
 
 namespace GamePacket {
 

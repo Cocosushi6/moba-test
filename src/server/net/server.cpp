@@ -1,8 +1,7 @@
 #include "server.h"
 #include "../../common/consts.h"
 
-#include "../game/game.h"
-
+#include "../../common/game.h"
 #include "SFML/Network.hpp"
 #include "SFML/System.hpp"
 #include <vector>
@@ -31,6 +30,10 @@ Net::Server::Server(int tcpPort, int udpPort, Game::Game *game) : m_udpPort(udpP
 	clientConnectionThread.launch();
 }
 
+Net::Client::Client(int id, sf::TcpSocket socket, sf::IpAddress address) : m_id(id), m_socket(socket), m_address(address) {
+
+}
+
 void Net::Server::waitForClient() {
 	while(true) {
 		if(m_listener.accept(m_tcpSocket) != Socket::Done) {
@@ -39,7 +42,7 @@ void Net::Server::waitForClient() {
 		}
 
 		Net::Client client(this->m_clientManager.giveId(), m_tcpSocket, m_tcpSocket.getRemoteAddress());
-		this->m_clientManager.addClient(client);
+		this->m_clientManager.addClient(&client);
 		Packet worldState;
 		worldState << "INIT" << *game;
 		this->sendTCPPacket(client.getId(), worldState);
@@ -47,7 +50,7 @@ void Net::Server::waitForClient() {
 }
 
 int Net::Server::sendTCPPacket(int clientID, Packet packet) {
-	TcpSocket *out = this->m_clientManager.getClient(clientID).getOutputSocket();
+	TcpSocket *out = this->m_clientManager.getClient(clientID)->getOutputSocket();
 
 	sf::Socket::Status status =  out->send(packet);
 	if(status != Socket::Done) {
@@ -58,7 +61,7 @@ int Net::Server::sendTCPPacket(int clientID, Packet packet) {
 }
 
 int Net::Server::sendUDPPacket(int clientID, Packet packet) {
-	IpAddress recipient = this->m_clientManager.getClient(clientID).getOutputSocket()->getRemoteAddress();
+	IpAddress recipient = this->m_clientManager.getClient(clientID)->getOutputSocket()->getRemoteAddress();
 
 	if(packet.getDataSize() <= UdpSocket::MaxDatagramSize) {
 		if(m_udpSocket.send(packet, recipient, DEFAULT_UDP_PORT) != Socket::Done) {
@@ -71,37 +74,4 @@ int Net::Server::sendUDPPacket(int clientID, Packet packet) {
 
 	return 0;
 }
-
-int DataManager::ClientManager::giveId() {
-	do {
-		m_lastID++;
-	} while(std::find(m_ids.begin(), m_ids.end(), m_lastID) != m_ids.end()); //check if new id isn't already taken
-	return m_lastID;
-}
-
-DataManager::PacketParser::PacketParser(Server *server, InputManager *iManager, ClientManager *cManager) :
-		m_server(server), m_iManager(iManager), m_cManager(cManager) {
-
-}
-
-int DataManager::PacketParser::parsePacket(Packet packet, int clientID) {
-	String descriptor;
-	if(!(packet >> descriptor)) {
-		cout << "Wrong packet format : no descriptor string at the beginning. Discarding packet." << endl;
-		return -1;
-	}
-
-	//parse actual information
-	if(descriptor == "INPUT") {
-		InputState state;
-		if(!packet >> state) {
-			cout << "Error reading InputState, discarding packet" << endl;
-			return -1;
-		}
-		this->m_iManager->parseInput(state);
-	}
-
-	return 0;
-}
-
 

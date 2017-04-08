@@ -1,13 +1,16 @@
 #include <iostream>
 #include "object.h"
 
-Objects::Object::Object(float mapX, float mapY, int heightZ, std::string name, GameEntityManager *entManager, World::GameMap *map) {
+using namespace std;
+
+Objects::Object::Object(float mapX, float mapY, int heightZ, std::string name, GameEntityManager *entManager, World::GameMap *map, bool remote) {
 	this->mapX = mapX;
 	this->mapY = mapY;
 	this->heightZ = heightZ;
 	this->name = name;
 	this->entManager = entManager;
 	this->map = map;
+	this->remote = remote;
 }
 
 float Objects::Object::getBasicDamage() const {

@@ -4,7 +4,6 @@ using namespace std;
 using namespace World;
 
 GameMap::GameMap(string pathToObj, string pathToGridFile) {
-	this->model = new Model(pathToObj);
 	this->grid = new MapGrid(pathToGridFile);
 }
 

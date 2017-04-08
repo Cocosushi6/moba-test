@@ -1,9 +1,14 @@
 #ifndef SRC_COMMON_OBJECTS_ENTITIES_ENTITY_H_
 #define SRC_COMMON_OBJECTS_ENTITIES_ENTITY_H_
 
-#include "../object.h"
-#include "../../weapons/weapons.h"
 #include <string>
+
+#include "../object.h"
+#include "../../map/world.h"
+
+namespace Weapons {
+	class Weapon;
+}
 
 namespace Objects {
 
@@ -15,7 +20,7 @@ namespace Objects {
 				virtual void update(long tickrate) = 0;
 				virtual void move(float mapX, float mapY, int layerZ) = 0; //sets newX, newY and newZ variables
 				virtual ~Entity();
-			private:
+			protected:
 				void step(float speed);
 				float newX = 0, newY = 0, newZ = 0;
 				float angle = 0;
@@ -36,13 +41,13 @@ namespace Objects {
 
 		class Player : public Entity {
 			public:
+				Player(float mapX, float mapY, int layerZ);
 				void update();
-				void move(float mapX, mapY, int layerZ);
+				void move(float mapX, float mapY, int layerZ);
 				void useWeapon();
 				~Player();
 			private:
 				Weapons::Weapon *weapon;
-
 		};
 
 	}
