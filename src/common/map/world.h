@@ -4,12 +4,12 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <SFML/Network.hpp>
 
-#include "tmxlite/Map.hpp"
 #include "pugixml.hpp"
 
-
 namespace World {
+	class GameMap;
 
 	class Tile {
 		public:
@@ -22,11 +22,11 @@ namespace World {
 
 	class MapGrid {
 		public:
-			MapGrid(bool remote); //load this one by getting Map's pathToTmx file with getter
-			MapGrid(std::string data, bool remote);
+			explicit MapGrid(GameMap *map); //load this one by getting Map's pathToTmx file with getter
+			explicit MapGrid(std::string data, GameMap *map);
 			int parseMap();
-			~MapGrid();
 		private:
+			GameMap *map;
 			int generateTiles();
 			pugi::xml_document tmxFile;
 			std::vector<std::vector<Tile>> tiles;
@@ -34,9 +34,9 @@ namespace World {
 
 	class GameMap {
 		public:
-			GameMap(std::string pathToObj, std::string pathToTmxFile);
-			GameMap(std::string pathToObj, MapGrid data);
-			~GameMap();
+			explicit GameMap();
+			explicit GameMap(std::string pathToTmxFile);
+			explicit GameMap(MapGrid data);
 		private:
 			std::string path;
 			MapGrid *grid;
@@ -44,5 +44,8 @@ namespace World {
 	};
 
 }
+
+sf::Packet& operator<<(sf::Packet& packet, const World::GameMap& game);
+sf::Packet& operator>>(sf::Packet& packet, World::GameMap& state);
 
 #endif /* SRC_CLIENT_WORLD_H_ */

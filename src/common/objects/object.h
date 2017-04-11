@@ -5,14 +5,14 @@
 #include <iostream>
 #include <vector>
 
-#include "../map/world.h"
 
 namespace Objects {
 	class GameEntityManager;
+	class Game;
 
 	class Object {
 		public:
-			Object(float mapX, float mapY, int heightZ, std::string name, GameEntityManager *entManager, World::GameMap *map, bool remote);
+			Object(float mapX, float mapY, int heightZ, std::string name, Game *game, bool remote);
 			virtual void update(long tickrate) = 0; //pure virtual method, Object is an abstract class
 			virtual ~Object();
 			float getBasicDamage() const;
@@ -29,8 +29,7 @@ namespace Objects {
 			int heightZ;
 			std::string name; //name is important : paths to 3D models are build according to this name
 			float life = 10, defense = 10, mana = 0, basicDamage = 1;
-			GameEntityManager *entManager;
-			World::GameMap *map;
+			Game *game;
 	};
 
 }

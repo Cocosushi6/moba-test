@@ -1,13 +1,24 @@
 #include "world.h"
+#include "pugixml.hpp"
 
 using namespace std;
 using namespace World;
 
-GameMap::GameMap(string pathToObj, string pathToGridFile) {
-	this->grid = new MapGrid(pathToGridFile);
+GameMap::GameMap() {
 }
 
-MapGrid::MapGrid(string data, bool remote) {
+GameMap::GameMap(string pathToGridFile) {
+	this->grid = new MapGrid(pathToGridFile, this);
+}
+
+GameMap::GameMap(MapGrid data) {
+	this->grid = grid;
+}
+
+
+
+MapGrid::MapGrid(string data, GameMap *map) {
+	this->map = map;
 	cout << "Loading MapGrid tmx file from data..." << endl;
 	pugi::xml_parse_result result = tmxFile.load_string(data.c_str());
 	if(result) {
@@ -21,7 +32,8 @@ MapGrid::MapGrid(string data, bool remote) {
 	}
 }
 
-MapGrid::MapGrid(bool remote) {
+MapGrid::MapGrid(GameMap *map) {
+	this->map = map;
 	pugi::xml_parse_result result = tmxFile.load_file("map_data.tmx");
 	if(result) {
 		cout << "File parsed successfully. Generating tiles..." << endl;
@@ -33,7 +45,16 @@ MapGrid::MapGrid(bool remote) {
 	}
 }
 
+
 int MapGrid::generateTiles() {
 
+	return 0;
+}
 
+sf::Packet& operator<<(sf::Packet& packet, const World::GameMap& game) {
+	return packet;
+}
+
+sf::Packet& operator>>(sf::Packet& packet, World::GameMap& state) {
+	return packet;
 }

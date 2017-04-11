@@ -12,16 +12,14 @@ namespace Net {
 	class Client;
 }
 
-using namespace Net;
-
 namespace DataManager {
 
 	class InputManager {
 		public:
-			InputManager(Server *server);
+			InputManager(Net::Server *server);
 			int parseInput(InputState state); //TODO parse input manager
 		private:
-			Server *server;
+			Net::Server *server;
 	};
 
 	class ClientManager {
@@ -40,10 +38,10 @@ namespace DataManager {
 
 	class PacketParser {
 		public:
-			PacketParser(Server *server, InputManager *iManager, ClientManager *cManager);
+			PacketParser(Net::Server *server, InputManager *iManager, ClientManager *cManager);
 			int parsePacket(Packet packet, int clientID); //
 		private:
-			Server *m_server;
+			Net::Server *m_server;
 			InputManager *m_iManager;
 			ClientManager *m_cManager;
 	};

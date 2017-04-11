@@ -17,7 +17,7 @@
 
 #include "shader.h"
 #include "mesh.h"
-#include "utils.h"
+#include "utils/utils.h"
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures) {
 	this->vertices = vertices;

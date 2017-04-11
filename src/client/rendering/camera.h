@@ -14,7 +14,7 @@
 #include <GLFW/glfw3native.h>
 #include "../../common/objects/entities/entity.h"
 #include "../../common/consts.h"
-#include "../game.h"
+#include "../../common/game.h"
 
 enum CameraMovement {
 	FORWARD,

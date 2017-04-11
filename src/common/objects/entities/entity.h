@@ -10,18 +10,20 @@ namespace Weapons {
 	class Weapon;
 }
 
+class Game;
+
 namespace Objects {
 
 	namespace Entities {
 
 		class Entity : public Object {
 			public:
-				Entity(float mapX, float mapY, int layerZ, std::string name, Objects::GameEntityManager *entManager, World::GameMap *map, bool remote);
+				Entity(float mapX, float mapY, int layerZ, std::string name, Game *game, bool remote);
 				virtual void update(long tickrate) = 0;
 				virtual void move(float mapX, float mapY, int layerZ) = 0; //sets newX, newY and newZ variables
-				virtual ~Entity();
+				virtual ~Entity() = 0;
 			protected:
-				void step(float speed);
+				virtual void step(float speed) = 0;
 				float newX = 0, newY = 0, newZ = 0;
 				float angle = 0;
 				float velocity = 0;
@@ -36,7 +38,7 @@ namespace Objects {
 				void move(float mapX, float mapY, int layerZ);
 				~MovingEntity();
 			private:
-
+				void step(float speed);
 		};
 
 		class Player : public Entity {

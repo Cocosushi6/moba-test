@@ -21,26 +21,23 @@ using namespace std;
 void drawMenu();
 void initWindow();
 
+static Game game = Game();
+static bool initDone = false;
 
-//init game objects
-Client client;
-GamePacket::PacketParser parser;
+static GamePacket::PacketParser parser(&game);
+static Client client(sf::IpAddress("127.0.0.1"), 45612, 45612, &parser);
 
-Game game;
-bool initDone = false;
+static sf::RenderWindow window;
+static Rendering::Renderer renderer(&window, &game);
 
-
-Rendering::Renderer renderer;
-sf::RenderWindow window;
-tgui::Gui gui;
-
+static tgui::Gui gui(window);
 
 int main() {
+	//init game objects
+	cout << "Launching Game !" << endl;
 	initWindow();
 	
-	gui(window);
-
-	renderer(&window, &map, &game); //Constructor TODO
+	cout << "window initialised" << endl;
 	//game loop
 	while(window.isOpen()) {
 

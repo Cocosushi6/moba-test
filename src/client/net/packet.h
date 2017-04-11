@@ -11,7 +11,6 @@ namespace GamePacket {
 		public:
 			PacketParser(Game *game);
 			int parsePacket(sf::Packet packet);
-			~PacketParser();
 		private:
 			Game *game;
 			World::GameMap *map;

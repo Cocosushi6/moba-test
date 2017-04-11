@@ -1,10 +1,8 @@
 #include "renderer.h"
 
 //OpenGL headers TODO
-Rendering::Renderer::Renderer(sf::Window *window, World::GameMap *map, Game *game) {
-    this->window = window;
-	this->map = map;
-    this->manager = game->getEntityManager();
+Rendering::Renderer::Renderer(sf::Window *window, Game *game)
+	: window(window), game(game) {
     this->init();
 }
 

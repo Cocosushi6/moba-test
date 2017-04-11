@@ -1,21 +1,37 @@
 #include "data_manager.h"
-
 #include <iostream>
 #include <SFML/Network.hpp>
 
+#include "server.h"
+
 using namespace sf;
 using namespace std;
+
+DataManager::InputManager::InputManager(Net::Server* server) :
+		server(server) {
+
+}
+
+DataManager::ClientManager::ClientManager(int lastID) :
+		m_lastID(lastID) {
+
+}
+
+DataManager::PacketParser::PacketParser(Net::Server *server, InputManager *iManager, ClientManager *cManager) :
+		m_server(server), m_iManager(iManager), m_cManager(cManager) {
+
+}
+
+int DataManager::InputManager::parseInput(InputState state) {
+
+	return 0;
+}
 
 int DataManager::ClientManager::giveId() {
 	do {
 		m_lastID++;
 	} while(std::find(m_ids.begin(), m_ids.end(), m_lastID) != m_ids.end()); //check if new id isn't already taken
 	return m_lastID;
-}
-
-DataManager::PacketParser::PacketParser(Server *server, InputManager *iManager, ClientManager *cManager) :
-		m_server(server), m_iManager(iManager), m_cManager(cManager) {
-
 }
 
 void DataManager::ClientManager::addClient(Net::Client *client) {

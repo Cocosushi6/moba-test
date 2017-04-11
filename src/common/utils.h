@@ -12,12 +12,7 @@ class InputState {
 		sf::Uint64 timestamp;
 };
 
-sf::Packet& operator <<(sf::Packet& packet, const InputState& state) {
-	return packet << state.state << state.key << state.timestamp;
-}
-
-sf::Packet& operator >>(sf::Packet& packet, InputState& state) {
-	return packet >> state.state >> state.key >> state.timestamp;
-}
+sf::Packet& operator<<(sf::Packet& packet, const InputState& state);
+sf::Packet& operator>>(sf::Packet& packet, InputState& state);
 
 #endif

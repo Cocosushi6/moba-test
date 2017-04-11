@@ -1,10 +1,11 @@
 #ifndef SRC_SERVER_NET_SERVER_H_
 #define SRC_SERVER_NET_SERVER_H_
 
-#include "SFML/Network.hpp"
 #include <vector>
 #include <string>
 #include <iostream>
+#include <SFML/Network.hpp>
+
 #include "../../common/game.h"
 #include "../../common/utils.h"
 #include "data_manager.h"
@@ -33,7 +34,6 @@ namespace Net {
 	class Client {
 		public:
 			Client();
-			Client(int id, sf::TcpSocket socket, sf::IpAddress address);
 			sf::TcpSocket* getOutputSocket() { return &m_socket; }//impl
 			int getId() { return m_id; }//impl
 			sf::IpAddress getIpAddress() { return m_address; }

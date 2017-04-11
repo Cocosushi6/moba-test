@@ -78,7 +78,7 @@ void Camera::processMouse(GLfloat xpos, GLfloat ypos) {
 
 void Camera::udpate() {
 	//follow focused entity if it isn't NULL and camera is told to follow an Entity
-	if(isFocused && *focusEnt != NULL) {
+	if(isFocused && focusEnt != NULL) {
 		float x = focusEnt->getMapX() - SCREEN_WIDTH / 2;
 		float z = focusEnt->getMapY() - SCREEN_HEIGHT / 2;
 		cameraPos.x = x / DEFAULT_TILE_XWIDTH;

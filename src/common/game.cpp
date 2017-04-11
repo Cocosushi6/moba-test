@@ -3,19 +3,37 @@
 #include "map/world.h"
 #include <string>
 
-Game::Game(bool remote, World::GameMap map) {
-  this->map = map;
-  this->remote = remote;
+Game::Game() {}
+
+//FIX THIS
+Game::Game(bool remote, std::string pathToMapFile) {
+	this->map = new World::GameMap(pathToMapFile);
+	this->entityManager = new Objects::GameEntityManager();
 }
 
-bool Game::isRemote() {
+Game::~Game() {
+	delete map;
+	delete entityManager;
+}
+
+bool Game::isRemote() const {
 	return remote;
 }
 
-Objects::GameEntityManager Game::getEntityManager() {
-	return entityManager;
+Objects::GameEntityManager* Game::getEntityManager() const {
+	return this->entityManager;
 }
 
-World::GameMap Game::getMap() {
+World::GameMap* Game::getMap() const {
 	return this->map;
 }
+
+sf::Packet& operator<<(sf::Packet& packet, const Game& game) {
+	return packet << *game.getMap();
+}
+
+sf::Packet& operator>>(sf::Packet& packet, Game& state) {
+	return packet;
+}
+
+

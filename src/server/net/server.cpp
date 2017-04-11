@@ -1,18 +1,22 @@
-#include "server.h"
-#include "../../common/consts.h"
-
-#include "../../common/game.h"
-#include "SFML/Network.hpp"
-#include "SFML/System.hpp"
 #include <vector>
 #include <algorithm>
 #include <string>
 #include <iostream>
+#include <SFML/System.hpp>
+#include <SFML/Network.hpp>
+
+#include "server.h"
+#include "../../common/consts.h"
+#include "../../common/utils.h"
+#include "data_manager.h"
 
 using namespace sf;
 using namespace std;
 
-Net::Server::Server(int tcpPort, int udpPort, Game::Game *game) : m_udpPort(udpPort), m_tcpPort(tcpPort), m_game(game) {
+Net::Server::Server(int tcpPort, int udpPort, Game *game)
+: m_udpPort(udpPort), m_tcpPort(tcpPort), m_game(game), m_inputManager(this), m_clientManager(), m_packetParser(this, &m_inputManager, &m_clientManager) {
+
+
 	if(m_listener.listen(tcpPort) != Socket::Done) {
 		cout << "Failed to listen on port " << tcpPort << " ! Aborting. " << endl;
 		return;
@@ -22,17 +26,10 @@ Net::Server::Server(int tcpPort, int udpPort, Game::Game *game) : m_udpPort(udpP
 		return;
 	}
 
-	this->m_inputManager();
-	this->m_clientManager();
-	this->m_packetParser(this, m_inputManager, m_clientManager);
-
-	Thread clientConnectionThread(&waitForClient);
+	Thread clientConnectionThread(&Net::Server::waitForClient, this);
 	clientConnectionThread.launch();
 }
 
-Net::Client::Client(int id, sf::TcpSocket socket, sf::IpAddress address) : m_id(id), m_socket(socket), m_address(address) {
-
-}
 
 void Net::Server::waitForClient() {
 	while(true) {
@@ -41,11 +38,7 @@ void Net::Server::waitForClient() {
 			return;
 		}
 
-		Net::Client client(this->m_clientManager.giveId(), m_tcpSocket, m_tcpSocket.getRemoteAddress());
-		this->m_clientManager.addClient(&client);
-		Packet worldState;
-		worldState << "INIT" << *game;
-		this->sendTCPPacket(client.getId(), worldState);
+
 	}
 }
 
