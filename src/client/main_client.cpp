@@ -36,26 +36,16 @@ int main_client(int argv, char** argc) {
 
 	//init game objects
 	cout << "Launching Game !" << endl;
-	initWindow();
 
-	cout << "window initialised" << endl;
+	window.create(sf::VideoMode(1024, 720), "OpenGL", sf::Style::Titlebar | sf::Style::Close);
+	window.setVerticalSyncEnabled(true);
+	window.setActive(true);
+
+	cout << "window initialised, OpenGL context version : " << window.getSettings().majorVersion << "." << window.getSettings().minorVersion << endl;
 	//game loop
+
 	while(window.isOpen()) {
 
-		//event loop
-
-		sf::Event ev;
-		while(window.pollEvent(ev)) {
-			if(ev.type == sf::Event::Closed) {
-				window.close();
-			}
-
-			gui.handleEvent(ev);
-		}
-
-		window.clear();
-		gui.draw();
-		window.display();
 	}
 
 	return 0;
@@ -79,15 +69,4 @@ void drawMenu() {
 
 	sf::IpAddress address(ipAddress->getText());
 	connectButton->connect("pressed", connectCallback, address);
-}
-
-void initWindow() {
-	sf::ContextSettings settings;
-	settings.antialiasingLevel = 0;
-	settings.depthBits = 24;
-	settings.stencilBits = 8;
-	settings.majorVersion = 3;
-	settings.minorVersion = 3;
-
-	window.create(sf::VideoMode(1024, 720), "OpenGL", sf::Style::Default, settings);
 }

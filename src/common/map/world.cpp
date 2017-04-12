@@ -8,7 +8,7 @@ GameMap::GameMap() {
 }
 
 GameMap::GameMap(string pathToGridFile) {
-	this->grid = new MapGrid(pathToGridFile, this);
+	this->grid = new MapGrid(this);
 }
 
 GameMap::GameMap(MapGrid data) {
