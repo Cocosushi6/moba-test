@@ -10,7 +10,7 @@ using namespace sf;
 Game game(false, "map.tmx");
 Net::Server server(45612, 45612, &game);
 
-int main_server() {
+int main_server(int argv, char** argc) {
 
 
 	return 0;

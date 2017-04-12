@@ -7,20 +7,20 @@
 #include <SFML/OpenGL.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+
 #include <TGUI/TGUI.hpp>
+
 #include "net/packet.h"
 #include "net/client.h"
 #include "rendering/renderer.h"
 #include "../common/map/world.h"
 #include "../common/game.h"
 #include "utils/utils.h"
+#include "main_client.h"
 
 using namespace std;
 
 //Init methods
-void drawMenu();
-void initWindow();
-
 static Game game = Game();
 static bool initDone = false;
 
@@ -32,11 +32,12 @@ static Rendering::Renderer renderer(&window, &game);
 
 static tgui::Gui gui(window);
 
-int main() {
+int main_client(int argv, char** argc) {
+
 	//init game objects
 	cout << "Launching Game !" << endl;
 	initWindow();
-	
+
 	cout << "window initialised" << endl;
 	//game loop
 	while(window.isOpen()) {
