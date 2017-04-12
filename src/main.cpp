@@ -4,7 +4,7 @@
 
 using namespace std;
 
-int main() {
+int main(int argv, char** argc) {
 	
 	cout << "Welcome to this Game called <undefined> version 0.0.0.1 ! " << endl;
 	cout << "Please choose to launch the game as client or server. A window will appear in both cases. " << endl;
@@ -20,7 +20,7 @@ int main() {
 	} while(choice != 1 && choice != 2);
 
 	if(choice == 1) {
-		main_client(0, NULL);
+		main_client();
 	} else if(choice == 2) {
 		main_server(0, NULL);
 	}

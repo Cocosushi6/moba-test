@@ -13,6 +13,7 @@
 #include "net/packet.h"
 #include "net/client.h"
 #include "rendering/renderer.h"
+#include "rendering/utils/utils.h"
 #include "../common/map/world.h"
 #include "../common/game.h"
 #include "utils/utils.h"
@@ -21,18 +22,19 @@
 using namespace std;
 
 //Init methods
-static Game game = Game();
-static bool initDone = false;
 
-static GamePacket::PacketParser parser(&game);
-static Client client(sf::IpAddress("127.0.0.1"), 45612, 45612, &parser);
+int main_client() {
+	cout << "running main_client ! " << endl;
+	static Game game = Game();
+	static bool initDone = false;
 
-static sf::RenderWindow window;
-static Rendering::Renderer renderer(&window, &game);
+	static GamePacket::PacketParser parser(&game);
+	static Client client(sf::IpAddress("127.0.0.1"), 45612, 45612, &parser);
 
-static tgui::Gui gui(window);
+	static sf::RenderWindow window;
+	static Rendering::Renderer renderer(&window, &game);
 
-int main_client(int argv, char** argc) {
+	static tgui::Gui gui(window);
 
 	//init game objects
 	cout << "Launching Game !" << endl;
@@ -44,29 +46,19 @@ int main_client(int argv, char** argc) {
 	cout << "window initialised, OpenGL context version : " << window.getSettings().majorVersion << "." << window.getSettings().minorVersion << endl;
 	//game loop
 
+
+
 	while(window.isOpen()) {
+		//Event loop
+		sf::Event ev;
+		while(window.pollEvent(ev)) {
+			if(ev.type == sf::Event::Closed) {
+				window.close();
+			}
+		}
 
 	}
-
+	cout << "Ended client game" << endl;
 	return 0;
 }
 
-void connectCallback(sf::IpAddress ipAddress) {
-	client.setServerAddress(ipAddress);
-	client.connect();
-}
-
-void drawMenu() {
-	tgui::TextBox::Ptr ipAddress = tgui::TextBox::create();
-	tgui::Button::Ptr connectButton = tgui::Button::create("Connect to server");
-
-	ipAddress->setSize(300, 40);
-	ipAddress->setPosition(window.getSize().x / 2 - ipAddress->getSize().x / 2, window.getSize().y / 2 - ipAddress->getSize().y / 2);
-	connectButton->setPosition(window.getSize().x / 2, window.getSize().y / 2 + 30);
-
-	gui.add(ipAddress, "ipAddress");
-	gui.add(connectButton, "connectButton");
-
-	sf::IpAddress address(ipAddress->getText());
-	connectButton->connect("pressed", connectCallback, address);
-}

@@ -12,22 +12,30 @@
 #include "../../common/objects/object.h"
 #include "../../common/objects/entities/entity.h"
 #include "../../common/game.h"
+
 #include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
 #include <map>
 
 namespace Rendering {
+	//forward declaration
+	namespace UI { class UIManager; }
 
 	class Renderer {
 		public:
-			Renderer(sf::Window *window, Game *game);
+			Renderer(sf::RenderWindow *window, Game *game);
+			~Renderer();
+			void render();
+		private:
+			void renderUI();
 			void renderMap();
 			void renderObjects();
-		private:
+			void renderEntities();
 			void init();
 			void addEntityModel(int id, Model *model);
 		    void renderEntity(Objects::Entities::Entity *ent);
-
-			sf::Window *window;
+		    UI::UIManager *uiManager;
+			sf::RenderWindow *window;
 			Game *game;
 			std::map<int, Model*> entityModels;
 	};

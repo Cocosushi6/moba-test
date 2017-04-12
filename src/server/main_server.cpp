@@ -7,11 +7,10 @@
 using namespace std;
 using namespace sf;
 
-Game game(false, "map.tmx");
-Net::Server server(45612, 45612, &game);
-
 int main_server(int argv, char** argc) {
-
+	cout << "running server" << endl;
+	Game game(false, "map.tmx");
+	Net::Server server(45612, 45612, &game);
 
 	return 0;
 }

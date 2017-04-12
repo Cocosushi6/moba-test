@@ -3,10 +3,7 @@
 
 #include <SFML/Network.hpp>
 
-void drawMenu();
-void initWindow();
-void connectCallback(sf::IpAddress address);
-int main_client(int argv, char** argc);
+int main_client();
 
 
 
