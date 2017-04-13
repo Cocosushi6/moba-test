@@ -7,6 +7,8 @@
 #include <SFML/OpenGL.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <chrono>
+#include <thread>
 
 #include <TGUI/TGUI.hpp>
 
@@ -23,13 +25,13 @@ using namespace std;
 
 //Init methods
 
-int main_client() {
+int main_client(std::string serverAddress) {
 	cout << "running main_client ! " << endl;
 	static Game game = Game();
 	static bool initDone = false;
 
 	static GamePacket::PacketParser parser(&game);
-	static Client client(sf::IpAddress("127.0.0.1"), 45612, 45612, &parser);
+	static Client client(sf::IpAddress(serverAddress), 45612, 45612, &parser);
 
 	static sf::RenderWindow window;
 	static Rendering::Renderer renderer(&window, &game);
@@ -46,6 +48,17 @@ int main_client() {
 	cout << "window initialised, OpenGL context version : " << window.getSettings().majorVersion << "." << window.getSettings().minorVersion << endl;
 	//game loop
 
+	if(window.isOpen()) {
+		renderer.drawLoadingScreen("Connecting to client, please wait ...");
+	}
+
+	bool connected = client.connect();
+	if(!connected) {
+		renderer.drawLoadingScreen("Failed to connect to client ! Please check the IP address you entered and if the server is running");
+		std::this_thread::sleep_for(std::chrono::milliseconds(2500)); //Leave time for reading
+		return -1; //Exit.
+	}
+
 
 
 	while(window.isOpen()) {
@@ -57,6 +70,7 @@ int main_client() {
 			}
 		}
 
+		renderer.render();
 	}
 	cout << "Ended client game" << endl;
 	return 0;

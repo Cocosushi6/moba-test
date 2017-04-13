@@ -16,6 +16,7 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <map>
+#include <string>
 
 namespace Rendering {
 	//forward declaration
@@ -26,6 +27,7 @@ namespace Rendering {
 			Renderer(sf::RenderWindow *window, Game *game);
 			~Renderer();
 			void render();
+			void drawLoadingScreen(std::string message);
 		private:
 			void renderUI();
 			void renderMap();

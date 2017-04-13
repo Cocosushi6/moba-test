@@ -14,24 +14,25 @@ Client::Client(IpAddress address, int udpPort, int tcpPort, GamePacket::PacketPa
 
 }
 
-int Client::connect() {
+
+bool Client::connect() {
 	//connect TCP socket to server on port
 	Socket::Status success = tcpSocket.connect(serverAddress, udpPort);
 	if(success != Socket::Done) {
 		std::cout << "Failed to connect tcp socket ! Aborting." << std::endl;
-		return -1;
+		return false;
 	}
 
 
 	if(udpSocket.bind(tcpPort) != Socket::Done) {
 		std::cout << "Failed to bind udp socket ! Aborting. " << std::endl;
-		return -1;
+		return false;
 	}	
 	
 	//receive game data from server
 	if(tcpSocket.receive(dataPacket) != Socket::Done) {
 		cout << "Error while receiving initialisation packet" << endl;
-		return -1;
+		return false;
 	}
 	packetParser->parsePacket(dataPacket);
 	
@@ -39,7 +40,7 @@ int Client::connect() {
 	tcpSocket.setBlocking(false);
 	udpSocket.setBlocking(false);
 
-	return 0;
+	return true;
 }
 
 void Client::poll() {

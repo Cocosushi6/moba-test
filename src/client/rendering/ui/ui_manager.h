@@ -27,6 +27,7 @@ namespace Rendering {
 				void addComponent(Component* comp);
 			private:
 				std::map<std::string, Component*> components;
+				Renderer *renderer;
 		};
 
 	}

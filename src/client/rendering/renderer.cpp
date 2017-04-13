@@ -2,6 +2,10 @@
 #include "ui/ui_manager.h"
 #include "ui/ui_components.h"
 
+#include <iostream>
+#include <string>
+#include <SFML/Graphics.hpp>
+
 //OpenGL headers TODO
 Rendering::Renderer::Renderer(sf::RenderWindow *window, Game *game)
 	: window(window), game(game) {
@@ -23,6 +27,22 @@ void Rendering::Renderer::init() {
 
 void Rendering::Renderer::addEntityModel(int id, Model *model) {
         entityModels[id] = model;
+}
+
+void Rendering::Renderer::drawLoadingScreen(std::string message) {
+	sf::Font font;
+	if(!font.loadFromFile("DejaVuSans.ttf")) {
+		std::cout << "Couldn't load basic font DejaVuSans.ttf. Things will soon get ugly around here. " << std::endl;
+		return;
+	}
+
+	sf::Text text;
+	text.setFont(font);
+	text.setString(message);
+	text.setCharacterSize(20);
+	text.setColor(sf::Color::White);
+	text.setStyle(sf::Text::Bold);
+	this->window->draw(text);
 }
 
 //method to be called in while loop

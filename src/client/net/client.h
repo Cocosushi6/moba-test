@@ -7,7 +7,7 @@
 class Client {
 	public:
 		Client(sf::IpAddress address, int udpPort, int tcpPort, GamePacket::PacketParser *parser);
-		int connect();
+		bool connect();
 		int sendTCPPacket(sf::Packet packet);
 		int sendUDPPacket(sf::Packet packet);
 		void poll();
