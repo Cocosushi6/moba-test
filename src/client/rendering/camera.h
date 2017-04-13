@@ -10,8 +10,6 @@
 #include <GL/glew.h>
 
 // Include GLFW
-#include <GLFW/glfw3.h>
-#include <GLFW/glfw3native.h>
 #include "../../common/objects/entities/entity.h"
 #include "../../common/consts.h"
 #include "../../common/game.h"

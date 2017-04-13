@@ -10,8 +10,6 @@
 #include <chrono>
 #include <thread>
 
-#include <TGUI/TGUI.hpp>
-
 #include "net/packet.h"
 #include "net/client.h"
 #include "rendering/renderer.h"
@@ -58,8 +56,6 @@ int main_client(std::string serverAddress) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(2500)); //Leave time for reading
 		return -1; //Exit.
 	}
-
-
 
 	while(window.isOpen()) {
 		//Event loop
