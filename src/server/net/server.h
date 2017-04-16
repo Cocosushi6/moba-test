@@ -34,6 +34,7 @@ namespace Net {
 	class Client {
 		public:
 			Client();
+			Client(int id, sf::IpAddress address);
 			sf::TcpSocket* getOutputSocket() { return &m_socket; }//impl
 			int getId() { return m_id; }//impl
 			sf::IpAddress getIpAddress() { return m_address; }

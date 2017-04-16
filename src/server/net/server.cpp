@@ -14,7 +14,7 @@ using namespace sf;
 using namespace std;
 
 Net::Server::Server(int tcpPort, int udpPort, Game *game)
-: m_udpPort(udpPort), m_tcpPort(tcpPort), m_game(game), m_inputManager(this), m_clientManager(), m_packetParser(this, &m_inputManager, &m_clientManager) {
+: m_udpPort(udpPort), m_tcpPort(tcpPort), m_game(game), m_inputManager(this), m_clientManager(), m_packetParser(this, &m_inputManager, &m_clientManager, m_game) {
 
 
 	if(m_listener.listen(tcpPort) != Socket::Done) {
@@ -30,18 +30,27 @@ Net::Server::Server(int tcpPort, int udpPort, Game *game)
 	clientConnectionThread.launch();
 }
 
+Net::Client::Client(int id, sf::IpAddress address) : m_id(id), m_address(address) {
+
+}
 
 void Net::Server::waitForClient() {
 	while(true) {
-		if(m_listener.accept(m_tcpSocket) != Socket::Done) {
-			cout << "Error happened during client connection. skipping. " << endl;
+		tcp_sock_ptr sock(new TcpSocket);
+		if(m_listener.accept(*sock) != Socket::Done) {
+			cout << "Error happened during client connection. Skipping." << endl;
 			return;
 		}
-
-
+		int newID = m_game->getEntityManager()->attribID();
+		this->m_clientManager.addClient(new Net::Client(newID, sock->getRemoteAddress()));
+		this->m_clientManager.setClientSocket(newID, sock);
+		Packet worldState;
+		worldState << "INIT" << newID << *m_game;
+		this->sendTCPPacket(newID, worldState);
 	}
 }
 
+//TODO change this (the way the socket is fetched on line 1)
 int Net::Server::sendTCPPacket(int clientID, Packet packet) {
 	TcpSocket *out = this->m_clientManager.getClient(clientID)->getOutputSocket();
 
@@ -53,6 +62,7 @@ int Net::Server::sendTCPPacket(int clientID, Packet packet) {
 	return 0;
 }
 
+//TODO change this too (for address IP getter)
 int Net::Server::sendUDPPacket(int clientID, Packet packet) {
 	IpAddress recipient = this->m_clientManager.getClient(clientID)->getOutputSocket()->getRemoteAddress();
 
