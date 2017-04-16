@@ -4,7 +4,6 @@ A project in C++, whose goal is to try and implement basic moba/rts game system,
 
 Libraries used (and soon in use) :
  - SFML (especially the networking part, most of rendering is done with pure OpenGL)
- - SFGUI, a GUI library for SFML
  - pugixml to parse .tmx files created by Tiled (xml data is converted to game Tile classes)
  
 Note : code is full of mistakes, and hasn't been tested at all. Classes are not complete and nothing runs.
