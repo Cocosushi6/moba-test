@@ -34,8 +34,6 @@ int main_client(std::string serverAddress) {
 	static sf::RenderWindow window;
 	static Rendering::Renderer renderer(&window, &game);
 
-	static tgui::Gui gui(window);
-
 	//init game objects
 	cout << "Launching Game !" << endl;
 
