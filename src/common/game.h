@@ -12,6 +12,7 @@ class Game {
 	public:
 		Game();
 		Game(bool remote, std::string pathToMapFile);
+		Game(bool remote, World::GameMap map);
 		~Game();
 		void init();
 		bool isRemote() const;

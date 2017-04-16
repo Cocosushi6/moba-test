@@ -1,0 +1,47 @@
+#include "entity_manager.h"
+#include "objects/object.h"
+#include "objects/entities/entity.h"
+
+#include <iostream>
+#include <vector>
+#include <map>
+
+using namespace Objects;
+using namespace std;
+
+Objects::GameEntityManager::GameEntityManager(int lastID) : lastID(lastID) {}
+
+int GameEntityManager::attribID() {
+	while(std::find(ids.begin(), ids.end(), lastID) != ids.end()) {
+		lastID++;
+	}
+	ids.push_back(lastID);
+	return lastID;
+}
+
+void GameEntityManager::addEntity(int id, Entities::Entity* ent) {
+	entities[id] = ent;
+	objects[id] = ent;
+}
+
+Entities::Entity* GameEntityManager::getEntity(int id) throw (std::string) {
+	map<int, Entities::Entity*>::iterator it = entities.find(id);
+	if(it != entities.end()) {
+		return it->second; //returns the value (it->first is the key)
+	}
+
+	throw "No such entity with id " + id;
+}
+
+void GameEntityManager::addObject(int id, Object* obj) {
+	objects[id] = obj;
+}
+
+Object* GameEntityManager::getObject(int id) throw (std::string) {
+	map<int, Object*>::iterator it = objects.find(id);
+	if(it != objects.end()) {
+		return it->second; //returns the value (it->first is the key)
+	}
+
+	throw "No such object with id " + id;
+}
