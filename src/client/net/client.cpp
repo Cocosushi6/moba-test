@@ -34,7 +34,27 @@ bool Client::connect() {
 		cout << "Error while receiving initialisation packet" << endl;
 		return false;
 	}
-	packetParser->parsePacket(dataPacket);
+
+	//Parse init packet and init game + localID
+	{
+		string descriptor;
+		Game *localGame = packetParser->getGame();
+		if (!(dataPacket >> descriptor)) {
+			cout << "No descriptor in packet, discarding" << endl;
+			return -1;
+		}
+
+		if (descriptor == "INIT") {
+			Game newGame;
+			int id;
+			if (!(dataPacket >> id >> newGame)) {
+				cout << "Error while deserializing game data and id at initialisation (PacketParser) " << endl;
+				return -1;
+			}
+			*localGame = newGame;
+			setLocalID(id);
+		}
+	}
 	
 	//then, set sockets to non blocking
 	tcpSocket.setBlocking(false);
@@ -81,3 +101,14 @@ void Client::setServerAddress(sf::IpAddress address) {
 	serverAddress = address;
 }
 
+void Client::setLocalID(int id) {
+	//ID can be changed only once
+	if(!idChanged) {
+		this->localID = id;
+		idChanged = true;
+	}
+}
+
+int Client::getLocalID() {
+	return this->localID;
+}

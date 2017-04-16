@@ -12,6 +12,8 @@ class Client {
 		int sendUDPPacket(sf::Packet packet);
 		void poll();
 		void setServerAddress(sf::IpAddress address);
+		int getLocalID();
+		void setLocalID(int id);
 	private:
 		sf::UdpSocket udpSocket;
 		sf::TcpSocket tcpSocket;
@@ -19,6 +21,8 @@ class Client {
 		sf::IpAddress serverAddress;
 		sf::Packet dataPacket;
 		GamePacket::PacketParser *packetParser;
+		int idChanged = false; //To lock the id once it is changed for the first time
+		int localID = -1;
 };
 
 #endif /* CLIENT_H_ */

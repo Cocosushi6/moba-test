@@ -4,9 +4,7 @@
 
 using namespace std;
 
-GamePacket::PacketParser::PacketParser(Game *game) : game(game) {
-        this->map = game->getMap();
-}
+GamePacket::PacketParser::PacketParser(Game *game) : game(game) {}
 
 int GamePacket::PacketParser::parsePacket(sf::Packet packet) {
     std::string descriptor;
@@ -21,10 +19,12 @@ int GamePacket::PacketParser::parsePacket(sf::Packet packet) {
             cout << "Wrong descriptor, no inputState in packet with descriptor " << descriptor << endl;
             return -1;
         }
-    } else if(descriptor == "INIT") {
-
+        //TODO correct input state here
     }
     
     return 0;
 }
 
+Game* GamePacket::PacketParser::getGame() {
+	return game;
+}
