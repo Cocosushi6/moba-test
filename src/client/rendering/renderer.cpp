@@ -43,6 +43,7 @@ void Rendering::Renderer::drawLoadingScreen(std::string message) {
 	text.setColor(sf::Color::White);
 	text.setStyle(sf::Text::Bold);
 	this->window->draw(text);
+	this->window->display();
 }
 
 //method to be called in while loop
