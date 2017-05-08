@@ -17,7 +17,8 @@ class Game {
 		void init();
 		bool isRemote() const;
 		Objects::GameEntityManager* getEntityManager() const;
-		World::GameMap* getMap() const;
+		World::GameMap getMap() const;
+		bool isInitDone() const;
 	private:
 		//Remote is true if the game is located in a client instance, and is false if the game is located in a server instance (game is then local)
 		bool remote = true;

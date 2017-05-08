@@ -37,6 +37,7 @@ namespace World {
 			explicit GameMap();
 			explicit GameMap(std::string pathToTmxFile);
 			explicit GameMap(MapGrid data);
+			std::string getMapPath();
 		private:
 			std::string path;
 			MapGrid *grid;

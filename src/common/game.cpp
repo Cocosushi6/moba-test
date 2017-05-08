@@ -5,7 +5,7 @@
 
 Game::Game() {}
 
-//FIX THIS
+//TODO FIX THIS
 Game::Game(bool remote, std::string pathToMapFile) {
 	this->map = new World::GameMap(pathToMapFile);
 	this->entityManager = new Objects::GameEntityManager();
@@ -16,6 +16,14 @@ Game::~Game() {
 	delete entityManager;
 }
 
+void Game::init() {
+	initDone = true;
+}
+
+bool Game::isInitDone() const {
+	return initDone;
+}
+
 bool Game::isRemote() const {
 	return remote;
 }
@@ -24,12 +32,12 @@ Objects::GameEntityManager* Game::getEntityManager() const {
 	return this->entityManager;
 }
 
-World::GameMap* Game::getMap() const {
-	return this->map;
+World::GameMap Game::getMap() const {
+	return *this->map;
 }
 
 sf::Packet& operator<<(sf::Packet& packet, const Game& game) {
-	return packet << *game.getMap();
+	return packet << game.getMap();
 }
 
 sf::Packet& operator>>(sf::Packet& packet, Game& state) {

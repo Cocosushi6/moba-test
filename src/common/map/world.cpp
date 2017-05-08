@@ -15,6 +15,9 @@ GameMap::GameMap(MapGrid data) {
 	this->grid = grid;
 }
 
+std::string GameMap::getMapPath() {
+	return this->path;
+}
 
 
 MapGrid::MapGrid(string data, GameMap *map) {
@@ -34,7 +37,7 @@ MapGrid::MapGrid(string data, GameMap *map) {
 
 MapGrid::MapGrid(GameMap *map) {
 	this->map = map;
-	pugi::xml_parse_result result = tmxFile.load_file("map_data.tmx");
+	pugi::xml_parse_result result = tmxFile.load_file(map->getMapPath().c_str());
 	if(result) {
 		cout << "File parsed successfully. Generating tiles..." << endl;
 		if(generateTiles() != 0) {
