@@ -11,19 +11,21 @@
 
 using namespace sf;
 
-typedef std::shared_ptr<sf::TcpSocket> tcp_sock_ptr;
 
 namespace Net {
 	class Server;
 	class Client;
 }
 
+typedef std::shared_ptr<sf::TcpSocket> tcp_sock_ptr;
+typedef std::shared_ptr<Net::Client> client_ptr;
+
 namespace DataManager {
 
 	class InputManager {
 		public:
 			InputManager(Net::Server *server);
-			int parseInput(InputState state); //TODO parse input manager
+			int parseInput(InputState state, int clientID); //TODO parse input manager
 		private:
 			Net::Server *server;
 	};
@@ -32,15 +34,14 @@ namespace DataManager {
 		public:
 			ClientManager(int lastID = 0);
 			std::vector<int> getIds();
-			std::map<int, Net::Client*> getClients();
-			Net::Client* getClient(int id) throw(std::string);
+			std::map<int, client_ptr> getClients();
+			client_ptr getClient(int id) throw(std::string);
 			int giveId(); //impl
-			void addClient(Net::Client *client);
-			tcp_sock_ptr getClientSocket(int id) throw(std::string);
-			void setClientSocket(int id, tcp_sock_ptr socket);
+			void addClient(client_ptr ptr);
+			void removeClient(int id);
+			void setClientForID(int id, client_ptr ptr);
 		private:
-			std::map<int, Net::Client*> m_clients;
-			std::map<int, tcp_sock_ptr> m_clientSockets;
+			std::map<int, client_ptr> m_clients;
 			std::vector<int> m_ids;
 			int m_lastID;
 	};
@@ -48,7 +49,7 @@ namespace DataManager {
 	class PacketParser {
 		public:
 			PacketParser(Net::Server *server, InputManager *iManager, ClientManager *cManager, Game* game);
-			int parsePacket(Packet packet, int clientID); //
+			int parsePacket(Packet packet);
 		private:
 			Game *game;
 			Net::Server *m_server;

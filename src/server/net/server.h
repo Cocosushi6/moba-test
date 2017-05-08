@@ -17,31 +17,37 @@ namespace Net {
 			int sendTCPPacket(int clientID, sf::Packet packet); //impl
 			int sendUDPPacket(int clientID, sf::Packet packet); //impl
 			int waitUDP();
+			void removeClient(int id);
 			Game* getAttachedGame();
+			DataManager::ClientManager* getClientManager();
+			void poll();
 		private:
-			void waitForClient();
 			DataManager::InputManager m_inputManager;
 			DataManager::ClientManager m_clientManager;
 			DataManager::PacketParser m_packetParser;
+			sf::SocketSelector sockSelector;
 			sf::UdpSocket m_udpSocket;
-			sf::TcpSocket m_tcpSocket;
 			sf::TcpListener m_listener;
-			sf::Packet m_packet;
 			int m_tcpPort, m_udpPort;
 			Game *m_game;
+			bool running = true;
 	};
 
 	class Client {
 		public:
 			Client();
-			Client(int id, sf::IpAddress address);
-			sf::TcpSocket* getOutputSocket() { return &m_socket; }//impl
+			Client(const Client &copy, int port);
+			Client(int id, int udpPort, sf::IpAddress address, tcp_sock_ptr tcpSocket, bool ready = false);
+			tcp_sock_ptr getOutputSocket() { return m_tcpSocket; }//impl
 			int getId() { return m_id; }//impl
 			sf::IpAddress getIpAddress() { return m_address; }
+			int getUDPPort() { return udpPort; }
 		private:
+			tcp_sock_ptr m_tcpSocket;
+			int udpPort;
 			int m_id;
 			sf::IpAddress m_address;
-			sf::TcpSocket m_socket;
+			bool ready = false;
 	};
 }
 

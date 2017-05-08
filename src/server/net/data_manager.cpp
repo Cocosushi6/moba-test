@@ -22,7 +22,7 @@ DataManager::PacketParser::PacketParser(Net::Server *server, InputManager *iMana
 
 }
 
-int DataManager::InputManager::parseInput(InputState state) {
+int DataManager::InputManager::parseInput(InputState state, int clientID) {
 
 	return 0;
 }
@@ -35,14 +35,19 @@ int DataManager::ClientManager::giveId() {
 	return m_lastID;
 }
 
-void DataManager::ClientManager::addClient(Net::Client *client) {
-	int id = client->getId();
-	this->m_clients[id] = client;
+//Attribute an client to an id and store them;
+void DataManager::ClientManager::addClient(client_ptr ptr) {
+	int id = ptr->getId();
+	this->m_clients[id] = ptr;
 }
 
-Net::Client* DataManager::ClientManager::getClient(int id) throw (std::string) {
+void DataManager::ClientManager::setClientForID(int id, client_ptr ptr) {
+	this->m_clients[id] = ptr;
+}
 
-	std::map<int, Net::Client*>::iterator it = m_clients.find(id);
+client_ptr DataManager::ClientManager::getClient(int id) throw (std::string) {
+
+	std::map<int, client_ptr>::iterator it = m_clients.find(id);
 
 	if (it != m_clients.end()) {
 		return it->second;
@@ -52,22 +57,7 @@ Net::Client* DataManager::ClientManager::getClient(int id) throw (std::string) {
 	throw "No such id : " + id;
 }
 
-tcp_sock_ptr DataManager::ClientManager::getClientSocket(int id) throw (std::string) {
-	std::map<int, tcp_sock_ptr>::iterator it = m_clientSockets.find(id);
-
-	if(it != m_clientSockets.end()) {
-		return it->second;
-	}
-
-	throw "No such id " + std::to_string(id) + " for a client socket. Maybe the user has disconnected ?";
-}
-
-void DataManager::ClientManager::setClientSocket(int id, tcp_sock_ptr socket) {
-	tcp_sock_ptr socket_ptr(socket);
-	m_clientSockets[id] = socket_ptr;
-}
-
-std::map<int, Net::Client*> DataManager::ClientManager::getClients() {
+std::map<int, client_ptr> DataManager::ClientManager::getClients() {
 	return this->m_clients;
 }
 
@@ -75,25 +65,64 @@ std::vector<int> DataManager::ClientManager::getIds() {
 	return this->m_ids;
 }
 
-int DataManager::PacketParser::parsePacket(Packet packet, int clientID) {
-	String descriptor;
+int DataManager::PacketParser::parsePacket(Packet packet) {
+	cout << "parsing packet" << endl;
+	std::string descriptor = "";
+	int clientID;
 	if(!(packet >> descriptor)) {
-		cout << "Wrong packet format : no descriptor string at the beginning. Discarding packet." << endl;
+		cout << "Wrong packet format : no descriptor string at the beginning. Dropping packet." << endl;
 		return -1;
 	}
-
+	if(!(packet >> clientID)) {
+		cout << "Wrong packet format : no ID at beginning of packet message after descriptor " << descriptor << endl;
+		return -2;
+	}
+	cout << "found descriptor + clientID, parsing actual packet" << endl;
 	//parse actual information
 	if(descriptor == "INPUT") {
 		InputState state;
 		if(packet >> state) {
-			int parseResult = this->m_iManager->parseInput(state);
+			int parseResult = this->m_iManager->parseInput(state, clientID);
 			return parseResult;
 		} else {
 			cout << "Error while extracting packet" << endl;
 			return -1;
 		}
+	} else if(descriptor == "INIT") {
+		//TODO initialise new client fully and send back game data
+		int port;
+		if(packet >> port) {
+			try {
+				cout << "Initialising new client..." << endl;
+				client_ptr currentClient = this->m_cManager->getClient(clientID);
+				sf::IpAddress address = currentClient->getIpAddress();
+
+				client_ptr newClient(new Net::Client(*currentClient, port));
+				this->m_cManager->setClientForID(clientID, newClient);
+
+				//new client is now initialised completely
+				cout << "sending back game data to client..." << endl;
+				sf::Packet worldState;
+				worldState << "INIT" << *game;
+				m_server->sendTCPPacket(clientID, worldState);
+			} catch(std::string const& e) {
+				cout << e << ", aborting." << endl;
+				return -1;
+			}
+		} else {
+			cout << "Error while fetching client port" << endl;
+			this->m_cManager->removeClient(clientID);
+			return -1;
+		}
 	}
 
 	return 0;
+}
+
+void DataManager::ClientManager::removeClient(int id) {
+	m_clients.erase(id);
+
+	std::vector<int>::iterator idsIt = std::find(m_ids.begin(), m_ids.end(), id);
+	if(idsIt != m_ids.end()) m_ids.erase(idsIt);
 }
 
