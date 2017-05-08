@@ -16,6 +16,8 @@ namespace Objects {
 			void addObject(int id, Object *obj);
 			Object* getObject(int id) throw (std::string);
 			std::vector<int> getIDs();
+			void removeObject(int id);
+			void removeEntity(int id);
 		private:
 			std::map<int, Object*> objects;
 			std::map<int, Entities::Entity*> entities;

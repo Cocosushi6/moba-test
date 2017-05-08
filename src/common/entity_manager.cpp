@@ -45,3 +45,18 @@ Object* GameEntityManager::getObject(int id) throw (std::string) {
 
 	throw "No such object with id " + id;
 }
+
+//removes only the objects
+void GameEntityManager::removeObject(int id) {
+	delete objects[id];
+	objects.erase(id);
+
+	std::vector<int>::iterator idsIt = std::find(ids.begin(), ids.end(), id);
+	if(idsIt != ids.end()) ids.erase(idsIt);
+}
+
+void GameEntityManager::removeEntity(int id) {
+	removeObject(id);
+	delete entities[id];
+	entities.erase(id);
+}
