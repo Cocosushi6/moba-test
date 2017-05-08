@@ -6,7 +6,7 @@
 
 class Client {
 	public:
-		Client(sf::IpAddress address, int udpPort, int tcpPort, GamePacket::PacketParser *parser);
+		Client(sf::IpAddress address, int serverPort, GamePacket::PacketParser *parser);
 		bool connect();
 		int sendTCPPacket(sf::Packet packet);
 		int sendUDPPacket(sf::Packet packet);
@@ -14,15 +14,17 @@ class Client {
 		void setServerAddress(sf::IpAddress address);
 		int getLocalID();
 		void setLocalID(int id);
+		bool isConnected();
 	private:
 		sf::UdpSocket udpSocket;
 		sf::TcpSocket tcpSocket;
-		int udpPort, tcpPort;
+		int serverPort;
+		int udpPort = -1;
 		sf::IpAddress serverAddress;
-		sf::Packet dataPacket;
 		GamePacket::PacketParser *packetParser;
 		int idChanged = false; //To lock the id once it is changed for the first time
 		int localID = -1;
+		bool connected = true;
 };
 
 #endif /* CLIENT_H_ */

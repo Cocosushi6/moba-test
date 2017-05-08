@@ -10,26 +10,31 @@ using namespace sf;
 using namespace std;
 using namespace GamePacket;
 
-Client::Client(IpAddress address, int udpPort, int tcpPort, GamePacket::PacketParser *parser) : serverAddress(address), udpPort(udpPort), tcpPort(tcpPort), packetParser(parser) {
+Client::Client(IpAddress address, int serverPort, GamePacket::PacketParser *parser) :
+		serverAddress(address), packetParser(parser), serverPort(serverPort) {
 
 }
 
 
 bool Client::connect() {
 	//connect TCP socket to server on port
-	Socket::Status success = tcpSocket.connect(serverAddress, udpPort);
+	Socket::Status success = tcpSocket.connect(serverAddress, serverPort);
 	if(success != Socket::Done) {
 		std::cout << "Failed to connect tcp socket ! Aborting." << std::endl;
 		return false;
 	}
 
 
-	if(udpSocket.bind(tcpPort) != Socket::Done) {
+	if(udpSocket.bind(sf::Socket::AnyPort) != Socket::Done) {
 		std::cout << "Failed to bind udp socket ! Aborting. " << std::endl;
 		return false;
 	}	
+	this->udpPort = udpSocket.getLocalPort();
 	
-	//receive game data from server
+	this->connected = true;
+
+	sf::Packet dataPacket;
+
 	if(tcpSocket.receive(dataPacket) != Socket::Done) {
 		cout << "Error while receiving initialisation packet" << endl;
 		return false;
@@ -41,18 +46,34 @@ bool Client::connect() {
 		Game *localGame = packetParser->getGame();
 		if (!(dataPacket >> descriptor)) {
 			cout << "No descriptor in packet, discarding" << endl;
-			return -1;
+			return false;
 		}
 
-		if (descriptor == "INIT") {
-			Game newGame;
+		if(descriptor == "ID") {
 			int id;
-			if (!(dataPacket >> id >> newGame)) {
+			if(!(dataPacket >> id)) {
+				cout << "Failed to get ID from server ! aborting connection." << endl;
+				return false;
+			}
+			if(id >= 0) {
+				setLocalID(id);
+			}
+			cout << "Received ID from server. Sending back UDP port" << endl;
+
+			Packet udpPortPacket;
+			std::string desc = "INIT";
+			udpPortPacket << desc << this->localID << udpPort;
+			this->sendTCPPacket(udpPortPacket);
+
+
+		} else if (descriptor == "INIT") {
+			Game newGame;
+			if (!(dataPacket >> newGame)) {
 				cout << "Error while deserializing game data and id at initialisation (PacketParser) " << endl;
-				return -1;
+				return false;
 			}
 			*localGame = newGame;
-			setLocalID(id);
+			cout << "Game data received from server" << endl;
 		}
 	}
 	
@@ -66,15 +87,36 @@ bool Client::connect() {
 void Client::poll() {
 	IpAddress sender;
 	unsigned short senderPort;
-	if(udpSocket.receive(dataPacket, sender, senderPort) != (Socket::Done || Socket::NotReady)) {
-		cout << "Error while receiving UDP packet" << endl;
-	}
-	packetParser->parsePacket(dataPacket);
 
-	if(tcpSocket.receive(dataPacket) != (Socket::Done || Socket::NotReady)) {
-		cout << "Error while reading TCP packet" << endl;
+	sf::Packet dataPacket;
+
+	Socket::Status status = udpSocket.receive(dataPacket, sender, senderPort);
+	if(status != Socket::Done && status != Socket::NotReady) {
+		cout << "Error while receiving UDP packet, status : " << status << endl;
+		if(status == Socket::Disconnected) {
+			cout << "Disconnected from server, aborting." << endl;
+			this->connected = false;
+		}
+	} else {
+		if(status != Socket::NotReady) {
+			cout << "udp packet received" << endl;
+			packetParser->parsePacket(dataPacket);
+		}
 	}
-	packetParser->parsePacket(dataPacket);
+
+	status = tcpSocket.receive(dataPacket);
+	if(status != Socket::Done && status != Socket::NotReady) {
+		cout << "Error while reading TCP packet, status : " << status << endl;
+		if(status == Socket::Disconnected) {
+			cout << "Disconnected from server, aborting." << endl;
+			this->connected = false;
+		}
+	} else {
+		if(status != Socket::NotReady) {
+			cout << "tcp packet received" << endl;
+			packetParser->parsePacket(dataPacket);
+		}
+	}
 }
 
 int Client::sendTCPPacket(Packet packet) {
@@ -90,7 +132,7 @@ int Client::sendTCPPacket(Packet packet) {
 }
 
 int Client::sendUDPPacket(Packet packet) {
-	if(udpSocket.send(packet, serverAddress, DEFAULT_UDP_PORT) != Socket::Done) {
+	if(udpSocket.send(packet, serverAddress, serverPort) != Socket::Done) {
 		cout << "Error while sending UDP packet in client" << endl;
 		return -1;
 	}
@@ -106,7 +148,13 @@ void Client::setLocalID(int id) {
 	if(!idChanged) {
 		this->localID = id;
 		idChanged = true;
+	} else {
+		cout << "ID already changed !!" << endl;
 	}
+}
+
+bool Client::isConnected() {
+	return this->connected;
 }
 
 int Client::getLocalID() {

@@ -23,13 +23,13 @@ using namespace std;
 
 //Init methods
 
-int main_client(std::string serverAddress) {
+int main_client(std::string serverAddress, int port) {
 	cout << "running main_client ! " << endl;
 	static Game game = Game();
 	static bool initDone = false;
 
 	static GamePacket::PacketParser parser(&game);
-	static Client client(sf::IpAddress(serverAddress), 45612, 45612, &parser);
+	static Client client(sf::IpAddress(serverAddress), 45612, &parser);
 
 	static sf::RenderWindow window;
 	static Rendering::Renderer renderer(&window, &game);
@@ -46,16 +46,18 @@ int main_client(std::string serverAddress) {
 
 	if(window.isOpen()) {
 		renderer.drawLoadingScreen("Connecting to client, please wait ...");
+		cout << "Connecting to client, please wait..." << endl;
 	}
 
 	bool connected = client.connect();
 	if(!connected) {
 		renderer.drawLoadingScreen("Failed to connect to client ! Please check the IP address you entered and if the server is running");
+		cout << "Failed to connect to client ! Please check the IP address you entered and if the server is running " << endl;
 		std::this_thread::sleep_for(std::chrono::milliseconds(2500)); //Leave time for reading
 		return -1; //Exit.
 	}
 
-	while(window.isOpen()) {
+	while(window.isOpen() && client.isConnected()) {
 		//Event loop
 		sf::Event ev;
 		while(window.pollEvent(ev)) {
@@ -63,6 +65,7 @@ int main_client(std::string serverAddress) {
 				window.close();
 			}
 		}
+		client.poll();
 
 		renderer.render();
 	}

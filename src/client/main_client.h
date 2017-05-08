@@ -4,7 +4,7 @@
 #include <SFML/Network.hpp>
 #include <string>
 
-int main_client(std::string serverAddress);
+int main_client(std::string serverAddress, int localPort); //localPort is the port the server will be sending data to
 
 
 
