@@ -27,6 +27,8 @@ int main_client(std::string serverAddress, int port) {
 	cout << "running main_client ! " << endl;
 	static Game game = Game();
 	static bool initDone = false;
+	
+	static Objects::Entities::Player *attachedPlayer;
 
 	static GamePacket::PacketParser parser(&game);
 	static Client client(sf::IpAddress(serverAddress), 45612, &parser);
@@ -57,12 +59,21 @@ int main_client(std::string serverAddress, int port) {
 		return -1; //Exit.
 	}
 
+	initDone = true;
+
 	while(window.isOpen() && client.isConnected()) {
 		//Event loop
 		sf::Event ev;
 		while(window.pollEvent(ev)) {
-			if(ev.type == sf::Event::Closed) {
-				window.close();
+			switch(ev.type) {
+				case sf::Event::Closed :
+					window.close();
+					break;
+
+				case sf::Event::KeyPressed :
+
+					break;
+
 			}
 		}
 		client.poll();

@@ -18,14 +18,28 @@ namespace Objects {
 
 		class Entity : public Object {
 			public:
-				Entity(float mapX, float mapY, int layerZ, std::string name, Game *game, bool remote);
+				Entity(float mapX, float mapY, float mapZ, int layerZ, std::string name, Game *game, bool remote);
 				virtual void update(long tickrate) = 0;
-				virtual void move(float mapX, float mapY, int layerZ) = 0; //sets newX, newY and newZ variables
+				virtual void move(float mapX, float mapY, float mapZ, int layerZ) = 0; //sets newX, newY and newZ variables
 				virtual ~Entity() = 0;
+				float getAngle() const;
+				void setAngle(float angle = 0);
+				int getLayerZ() const;
+				void setLayerZ(int layerZ = 0);
+				bool isMoving() const;
+				void setMoving(bool moving = false);
+				float getNewX() const;
+				void setNewX(float newX = 0);
+				float getNewY() const;
+				void setNewY(float newY = 0);
+				float getNewZ() const;
+				void setNewZ(float newZ = 0);
+				float getVelocity() const;
+				void setVelocity(float velocity = 0);
 			protected:
-				virtual void step(float speed) = 0;
 				float newX = 0, newY = 0, newZ = 0;
-				float angle = 0;
+				int layerZ = 0;
+				float orientation = 0;
 				float velocity = 0;
 				bool moving = false;
 		};
@@ -33,23 +47,23 @@ namespace Objects {
 		//basic implementation of Entity
 		class MovingEntity : public Entity {
 			public:
-				MovingEntity(float mapX, float mapY, int layerZ);
-				void update();
-				void move(float mapX, float mapY, int layerZ);
+				MovingEntity(float mapX, float mapY, float mapZ, int layerZ);
+				void update(long tickrate);
+				void move(float mapX, float mapY, float mapZ, int layerZ);
 				~MovingEntity();
 			private:
-				void step(float speed);
 		};
 
 		class Player : public Entity {
 			public:
-				Player(float mapX, float mapY, int layerZ);
-				void update();
-				void move(float mapX, float mapY, int layerZ);
+				Player(float mapX, float mapY, float mapZ, int layerZ, std::string name, Game *game, bool remote);
+				void update(long tickrate);
+				void move(float mapX, float mapY, float mapZ, int layerZ);
 				void useWeapon();
+				void setWeapon(Weapons::Weapon *weapon);
 				~Player();
-			private:
-				Weapons::Weapon *weapon;
+			protected:
+				Weapons::Weapon *weapon = NULL;
 		};
 
 	}

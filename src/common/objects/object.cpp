@@ -14,7 +14,7 @@ Objects::Object::Object(float mapX, float mapY, int heightZ, std::string name, G
 }
 
 Objects::Object::~Object() {
-
+	delete game;
 }
 
 float Objects::Object::getBasicDamage() const {

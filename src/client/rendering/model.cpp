@@ -51,12 +51,12 @@ void Model::processNode(aiNode* node, const aiScene* scene) {
 }
 
 Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
-	std::vector<Vertex> vertices;
+	std::vector<MeshVertex> vertices;
 	std::vector<GLuint> indices;
 	std::vector<Texture> textures;
 
 	for(int i = 0; i < mesh->mNumVertices; i++) {
-		Vertex vertex;
+		MeshVertex vertex;
 
 		glm::vec3 vector;
 		vector.x = mesh->mVertices[i].x;

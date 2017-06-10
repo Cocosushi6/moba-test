@@ -67,24 +67,30 @@ void Net::Server::poll() {
 				}
 			}
 			for(std::map<int, client_ptr>::iterator it = m_clientManager.getClients().begin(); it != m_clientManager.getClients().end(); ++it) {
-				tcp_sock_ptr sock = it->second->getOutputSocket();
-				if(sockSelector.isReady(*sock)) {
+				Net::Client client = *it->second;
+				sf::TcpSocket& sock = *client.getOutputSocket();
+				if(sockSelector.isReady(sock)) {
 					sf::Packet packet;
-					Socket::Status status = sock->receive(packet);
+					Socket::Status status = sock.receive(packet);
 					if(status == sf::Socket::Done) {
 						cout << "DEBUG : parsing packet" << endl;
 						this->m_packetParser.parsePacket(packet);
 					} else {
 						cout << "Error while receiving packet of client with id " << it->second->getId() << ", status is " << status << endl;
 						if(status == Socket::Disconnected) {
-							cout << "Player with id " << it->second->getId() << " was disconnected. " << endl;
-							removeClient(it->second->getId());
-							sockSelector.remove(*sock);
+							int discoID = it->second->getId();
+							cout << "Player with id " << discoID << " was disconnected. " << endl;
+							removeClient(discoID);
+							sockSelector.remove(sock);
+							cout << "removed all data concerning client with id " << discoID << endl;
+							//bug with iterator (which loops again, even if m_clientManager.getClients() is empty), is avoided here (was segfaulting before)
+							break;
 						}
 					}
 				}
 			}
 			if(sockSelector.isReady(m_udpSocket)) {
+				cout << "UDP socket ready" << endl;
 				sf::IpAddress sender;
 				unsigned short int port;
 				sf::Packet packet;
@@ -103,6 +109,7 @@ void Net::Server::poll() {
 void Net::Server::removeClient(int id) {
 	m_clientManager.removeClient(id);
 	m_game->getEntityManager()->removeEntity(id);
+	cout << "Net::Server::removeClient : removed client with id " << id << endl;
 }
 
 sf::Socket::Status receiveWithTimeout(sf::TcpSocket &socket, sf::Packet &packet, int timeout) {
@@ -115,7 +122,6 @@ sf::Socket::Status receiveWithTimeout(sf::TcpSocket &socket, sf::Packet &packet,
 	}
 }
 
-//TODO change this (the way the socket is fetched on line 1)
 int Net::Server::sendTCPPacket(int clientID, Packet packet) {
 	tcp_sock_ptr out = this->m_clientManager.getClient(clientID)->getOutputSocket();
 

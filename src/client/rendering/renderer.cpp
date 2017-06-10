@@ -18,7 +18,8 @@ Rendering::Renderer::~Renderer() {
 }
 
 void Rendering::Renderer::renderMap() {
-
+	World::GameMap* map = game->getMap();
+	
 }
 
 void Rendering::Renderer::init() {

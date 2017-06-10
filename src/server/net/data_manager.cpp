@@ -57,8 +57,8 @@ client_ptr DataManager::ClientManager::getClient(int id) throw (std::string) {
 	throw "No such id : " + id;
 }
 
-std::map<int, client_ptr> DataManager::ClientManager::getClients() {
-	return this->m_clients;
+std::map<int, client_ptr>& DataManager::ClientManager::getClients() {
+	return m_clients;
 }
 
 std::vector<int> DataManager::ClientManager::getIds() {
@@ -89,7 +89,6 @@ int DataManager::PacketParser::parsePacket(Packet packet) {
 			return -1;
 		}
 	} else if(descriptor == "INIT") {
-		//TODO initialise new client fully and send back game data
 		int port;
 		if(packet >> port) {
 			try {
@@ -104,7 +103,9 @@ int DataManager::PacketParser::parsePacket(Packet packet) {
 				cout << "sending back game data to client..." << endl;
 				sf::Packet worldState;
 				worldState << "INIT" << *game;
+				cout << "worldState packet data size : " << worldState.getDataSize() << endl;
 				m_server->sendTCPPacket(clientID, worldState);
+				cout << "game data sent back, client initialised successfully" << endl;
 			} catch(std::string const& e) {
 				cout << e << ", aborting." << endl;
 				return -1;
@@ -124,5 +125,6 @@ void DataManager::ClientManager::removeClient(int id) {
 
 	std::vector<int>::iterator idsIt = std::find(m_ids.begin(), m_ids.end(), id);
 	if(idsIt != m_ids.end()) m_ids.erase(idsIt);
+	cout << "DataManager.cpp : removed client with id " << id << endl;
 }
 

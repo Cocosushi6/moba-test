@@ -12,7 +12,7 @@
 
 #include "shader.h"
 
-struct Vertex { // A point in the world
+struct MeshVertex { // A point in the world
 	glm::vec3 Position;
 	glm::vec3 Normals;
 	glm::vec2 TexCoords;
@@ -26,11 +26,11 @@ struct Texture {
 
 class Mesh {
 public:
-	std::vector<Vertex> vertices; //vertices for VBOs
+	std::vector<MeshVertex> vertices; //vertices for VBOs
 	std::vector<GLuint> indices; //indices for EBOs
 	std::vector<Texture> textures; //Texture coordinates & al
 
-	Mesh(std::vector<Vertex> pVertices, std::vector<GLuint> indices, std::vector<Texture> textures);
+	Mesh(std::vector<MeshVertex> pVertices, std::vector<GLuint> indices, std::vector<Texture> textures);
 	void draw(Shader shad);
 private:
 	GLuint VAO, VBO, EBO;

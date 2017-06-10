@@ -15,6 +15,7 @@ class Client {
 		int getLocalID();
 		void setLocalID(int id);
 		bool isConnected();
+		static bool checkPacket(sf::Packet packet);
 	private:
 		sf::UdpSocket udpSocket;
 		sf::TcpSocket tcpSocket;

@@ -23,63 +23,69 @@ bool Client::connect() {
 		std::cout << "Failed to connect tcp socket ! Aborting." << std::endl;
 		return false;
 	}
-
-
 	if(udpSocket.bind(sf::Socket::AnyPort) != Socket::Done) {
 		std::cout << "Failed to bind udp socket ! Aborting. " << std::endl;
 		return false;
 	}	
 	this->udpPort = udpSocket.getLocalPort();
-	
 	this->connected = true;
-
 	sf::Packet dataPacket;
+	sf::Packet gamePacket;
 
+
+	//Get localID for later communication with server
 	if(tcpSocket.receive(dataPacket) != Socket::Done) {
 		cout << "Error while receiving initialisation packet" << endl;
 		return false;
 	}
-
-	//Parse init packet and init game + localID
-	{
-		string descriptor;
-		Game *localGame = packetParser->getGame();
-		if (!(dataPacket >> descriptor)) {
-			cout << "No descriptor in packet, discarding" << endl;
+	string descriptor;
+	if (!(dataPacket >> descriptor)) {
+		cout << "No descriptor in packet, discarding" << endl;
+		return false;
+	}
+	if(descriptor == "ID") {
+		int id;
+		if(!(dataPacket >> id)) {
+			cout << "Failed to get ID from server ! aborting connection." << endl;
 			return false;
 		}
-
-		if(descriptor == "ID") {
-			int id;
-			if(!(dataPacket >> id)) {
-				cout << "Failed to get ID from server ! aborting connection." << endl;
-				return false;
-			}
-			if(id >= 0) {
-				setLocalID(id);
-			}
-			cout << "Received ID from server. Sending back UDP port" << endl;
-
-			Packet udpPortPacket;
-			std::string desc = "INIT";
-			udpPortPacket << desc << this->localID << udpPort;
-			this->sendTCPPacket(udpPortPacket);
-
-
-		} else if (descriptor == "INIT") {
-			Game newGame;
-			if (!(dataPacket >> newGame)) {
-				cout << "Error while deserializing game data and id at initialisation (PacketParser) " << endl;
-				return false;
-			}
-			*localGame = newGame;
-			cout << "Game data received from server" << endl;
+		if(id >= 0) {
+			setLocalID(id);
 		}
+		cout << "Received ID from server. Sending back UDP port." << endl;
+
+		Packet udpPortPacket;
+		udpPortPacket << "INIT" << this->localID << udpPort;
+		this->sendTCPPacket(udpPortPacket);
 	}
-	
+
+	Game *localGame = packetParser->getGame();
+	//Get actual game data
+	if(tcpSocket.receive(gamePacket) != Socket::Done) {
+		cout << "Error while receiving game data from server. Aborting. " << endl;
+		return false;
+	}
+	gamePacket >> descriptor;
+	if (descriptor == "INIT") {
+		cout << "received init packet" << endl;
+		Game newGame;
+		Client::checkPacket(gamePacket);
+		//TODO solve error here (not working)
+		if (!(gamePacket >> newGame)) {
+			cout << "Client.cpp : Error while deserializing game data and id at initialisation (PacketParser) " << endl;
+			return false;
+		}
+		*localGame = newGame;
+		localGame->printData();
+		cout << "Game data received from server" << endl;
+	} else {
+		cout << "unknown descriptor " << descriptor << endl;
+	}
 	//then, set sockets to non blocking
 	tcpSocket.setBlocking(false);
 	udpSocket.setBlocking(false);
+
+	cout << "connection done !" << endl;
 
 	return true;
 }
@@ -108,7 +114,7 @@ void Client::poll() {
 	if(status != Socket::Done && status != Socket::NotReady) {
 		cout << "Error while reading TCP packet, status : " << status << endl;
 		if(status == Socket::Disconnected) {
-			cout << "Disconnected from server, aborting." << endl;
+			cout << "Disconnected from server, aborting. (status : 3)" << endl;
 			this->connected = false;
 		}
 	} else {
@@ -133,7 +139,7 @@ int Client::sendTCPPacket(Packet packet) {
 
 int Client::sendUDPPacket(Packet packet) {
 	if(udpSocket.send(packet, serverAddress, serverPort) != Socket::Done) {
-		cout << "Error while sending UDP packet in client" << endl;
+		cout << "Error while sending UDP packet to server" << endl;
 		return -1;
 	}
 	return 0;
@@ -159,4 +165,14 @@ bool Client::isConnected() {
 
 int Client::getLocalID() {
 	return this->localID;
+}
+
+bool Client::checkPacket(sf::Packet packet) {
+	cout << "Packet size : " << packet.getDataSize() << endl;
+	cout << "End of packet : " << std::boolalpha << packet.endOfPacket() << endl;
+	if(packet) {
+		return true;
+	} else {
+		return false;
+	}
 }

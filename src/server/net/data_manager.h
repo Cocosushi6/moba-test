@@ -34,7 +34,7 @@ namespace DataManager {
 		public:
 			ClientManager(int lastID = 0);
 			std::vector<int> getIds();
-			std::map<int, client_ptr> getClients();
+			std::map<int, client_ptr>& getClients();
 			client_ptr getClient(int id) throw(std::string);
 			int giveId(); //impl
 			void addClient(client_ptr ptr);

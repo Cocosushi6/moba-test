@@ -17,8 +17,9 @@ class Game {
 		void init();
 		bool isRemote() const;
 		Objects::GameEntityManager* getEntityManager() const;
-		World::GameMap getMap() const;
+		World::GameMap* getMap();
 		bool isInitDone() const;
+		void printData();
 	private:
 		//Remote is true if the game is located in a client instance, and is false if the game is located in a server instance (game is then local)
 		bool remote = true;
@@ -27,7 +28,15 @@ class Game {
 		Objects::GameEntityManager *entityManager = 0;
 };
 
-sf::Packet& operator<<(sf::Packet& packet, const Game& game);
+class GameInputManager {
+	public:
+		GameInputManager(Game *game);
+		int parseInput(InputState state, int entityID);
+	private:
+		Game *attachedGame;
+};
+
+sf::Packet& operator<<(sf::Packet& packet, Game& game);
 sf::Packet& operator>>(sf::Packet& packet, Game& state);
 
 #endif /* SRC_GAME_H */

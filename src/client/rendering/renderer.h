@@ -44,7 +44,4 @@ namespace Rendering {
 		
 }
 
-
-
-
 #endif /* SRC_CLIENT_RENDERING_RENDERER_H_ */
