@@ -41,6 +41,7 @@ public:
 	void udpate();
 private:
 	void update_vectors();
+	void checkBounds();
 
 	glm::mat4 view;
 

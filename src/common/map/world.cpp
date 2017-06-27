@@ -7,7 +7,7 @@ using namespace std;
 using namespace World;
 
 
-Tile::Tile(int x, int y, int layerZ,  TileType type, Quad verticesCoordinates, int uniqueID, int size, bool solid) :
+Tile::Tile(int x, int y, int layerZ,  string type, Quad verticesCoordinates, int uniqueID, int size, bool solid) :
 	layerZ(layerZ), type(type), verticesCoordinates(verticesCoordinates), uniqueID(uniqueID), size(size), solid(solid) {
 	worldPosition.x = x;
 	worldPosition.y = y;
@@ -15,7 +15,7 @@ Tile::Tile(int x, int y, int layerZ,  TileType type, Quad verticesCoordinates, i
 
 Tile::Tile() {}
 
-TileType Tile::getTileType() {
+string Tile::getTileType() {
 	return this->type;
 }
 
@@ -51,7 +51,7 @@ void World::Tile::setSize(int size) {
 	this->size = size;
 }
 
-void World::Tile::setType(TileType type) {
+void World::Tile::setType(string type) {
 	this->type = type;
 }
 
@@ -72,21 +72,38 @@ void World::Tile::setSolid(bool solid) {
 }
 
 GameMap::GameMap() {
+	cout << "Creating game map" << endl;
+	this->initBasicTileTypes();
 	this->remote = true;
 	this->grid = new MapGrid(this);
 }
 
 GameMap::GameMap(bool remote) : remote(remote) {
+	this->initBasicTileTypes();
 	this->grid = new MapGrid(this);
 }
 
 GameMap::GameMap(bool remote, string pathToGridFile) {
+	this->initBasicTileTypes();
 	this->path = pathToGridFile;
 	this->grid = new MapGrid(this, 1);
 }
 
 GameMap::GameMap(bool remote, MapGrid data) {
+	this->initBasicTileTypes();
 	this->grid = grid;
+}
+
+GameMap::~GameMap() {
+	delete grid;
+}
+
+void GameMap::initBasicTileTypes() {
+	this->registerTileType("grass");
+	this->registerTileType("grass");
+	this->registerTileType("grass");
+	this->registerTileType("grass");
+	cout << "initialised basic tile types" << endl;
 }
 
 std::string GameMap::getMapPath() {
@@ -97,8 +114,16 @@ MapGrid* GameMap::getMapGrid() {
 	return this->grid;
 }
 
+bool GameMap::isRemote() {
+	return this->remote;
+}
+
 MapGrid::MapGrid(GameMap *map) : map(map) {
 	this->layerNum = 0;
+}
+
+MapGrid::~MapGrid() {
+
 }
 
 MapGrid::MapGrid(string data, GameMap *map, int layerNumber) : layerNum(layerNumber) {
@@ -130,7 +155,15 @@ MapGrid::MapGrid(GameMap *map, int layerNumber) : layerNum(layerNumber) {
 }
 
 int MapGrid::generateTiles() {
-	ifstream objFile("map.obj"); //layer 1
+	cout << "Generating tiles" << endl;
+	std::string mapPath;
+	if(this->map->isRemote()) {
+		mapPath = "map.obj";
+	} else {
+		mapPath = "map.obj";
+	}
+
+	ifstream objFile(mapPath); //layer 1
 	if(!objFile) {
 		cout << "couldn't load obj file : error while opening file" << endl;
 		return -2;
@@ -138,27 +171,51 @@ int MapGrid::generateTiles() {
 
 	string line;
 	int lastID = 0;
-	vector<Vertex> vertices;
+	vector<sf::Vector3<double>> vertices;
+	vector<sf::Vector3<double>> normals;
+	vector<sf::Vector2<double>> texCoords;
 	std::map<int, Quad> idForQuad;
+
+	cout << "parsing obj file ..." << endl;
 
 	while(getline(objFile, line)) {
 		vector<string> lineData = split(line, ' ');
+		//Vertex
 		if(lineData[0] == "v") {
-			Vertex vertex;
-			vertex.coordinates.x = std::stod(lineData[1].c_str());
-			vertex.coordinates.y = std::stod(lineData[2].c_str());
-			vertex.coordinates.z = std::stod(lineData[3].c_str());
+			sf::Vector3<double> vertex;
+			vertex.x = std::stod(lineData[1].c_str());
+			vertex.y = std::stod(lineData[2].c_str());
+			vertex.z = std::stod(lineData[3].c_str());
 			vertices.push_back(vertex);
+		//Normals
+		} else if(lineData[0] ==  "vn") {
+			sf::Vector3<double> normal;
+			normal.x = std::stod(lineData[1].c_str());
+			normal.y = std::stod(lineData[2].c_str());
+			normal.z = std::stod(lineData[3].c_str());
+			normals.push_back(normal);
+		} else if(lineData[0] == "vt") {
+			sf::Vector2<double> texCoord;
+			texCoord.x = std::stod(lineData[1].c_str());
+			texCoord.y = std::stod(lineData[2].c_str());
+			texCoords.push_back(texCoord);
 		} else if(lineData[0] == "f") {
 			Quad quad;
 			for(int i = 0; i < 4; i++) {
-				quad.vertices[i] = vertices[stoi(lineData[i+1])];
+				vector<string> vertData = split(lineData[i+1], '/');
+				Vertex vert;
+				vert.coordinates = vertices[stoi(vertData[0]) - 1];
+				vert.textCoords = texCoords[stoi(vertData[1]) - 1];
+				vert.normals = normals[stoi(vertData[2]) - 1];
+				quad.vertices[i] = vert;
 			}
 			idForQuad[lastID] = quad;
 			lastID++;
 		}
 	}
 
+
+	//parse tmx file
 	pugi::xml_node data = tmxFile.child("map").child("layer").child("data");
 
 	int tilewidth = tmxFile.child("map").child("tileset").attribute("tilewidth").as_int();
@@ -178,8 +235,9 @@ int MapGrid::generateTiles() {
 	std::vector<std::string> lines = split(rawCSVdata, '\n');
 	int x = 0;
 	int y = 0;
-
 	lastID = 0;
+
+	cout << "parsing tmx file ..." << endl;
 	for(std::string line : lines) {
 		//the tile numbers for a single line
 		std::vector<std::string> tiles = split(line, ',');
@@ -191,8 +249,7 @@ int MapGrid::generateTiles() {
 			//get tile type
 			int tileNum = std::stoi(tile); //stoi = string to int
 			//convert int to TileType
-			TileType type = (TileType)tileNum;
-
+			std::string type = this->map->intToTileType(tileNum);
 			//create and add tile
 			Tile t(x, y, 0, type, idForQuad[lastID], lastID);
 			resultLine.push_back(t);
@@ -225,6 +282,18 @@ std::vector<std::vector<World::Tile>> World::MapGrid::getTiles() {
 	return tiles;
 }
 
+std::string World::GameMap::intToTileType(int num) {
+	return tileTypes.at(num - 1);
+}
+
+void World::GameMap::registerTileType(string type) {
+	tileTypes.push_back(type);
+}
+
+vector<string> World::GameMap::getTileTypes() {
+	return this->tileTypes;
+}
+
 int World::MapGrid::getLayer() {
 	return this->layerNum;
 }
@@ -237,16 +306,6 @@ void World::MapGrid::setLayer(int layer) {
 	this->layerNum = layer;
 }
 
-sf::Packet& operator<<(sf::Packet& packet, const TileType& type) {
-	return packet << (sf::Uint16)type;
-}
-
-sf::Packet& operator>>(sf::Packet& packet, TileType& type) {
-	sf::Uint16 typeNumber;
-	packet >> typeNumber;
-	type = (TileType)typeNumber;
-	return packet;
-}
 
 sf::Packet& operator<<(sf::Packet& packet, World::Tile& tile) {
 	return packet << tile.getWorldPosition() << (sf::Uint16)tile.getLayerZ() << (sf::Uint16)tile.getSize() << tile.isSolid() << tile.getTileType() << (sf::Uint32)tile.getUniqueID() << tile.getCoordinates();
@@ -257,7 +316,7 @@ sf::Packet& operator>>(sf::Packet& packet, World::Tile& tile) {
 	sf::Uint16 layerZ;
 	sf::Uint16 size;
 	bool solid;
-	TileType type;
+	string type;
 	sf::Uint32 uniqueID;
 	Quad coordinates;
 	packet >> worldPos >> layerZ >> size >> solid >> type >> uniqueID >> coordinates;

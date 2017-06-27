@@ -9,7 +9,7 @@ using namespace sf;
 
 int main_server(int argv, char** argc) {
 	cout << "running server" << endl;
-	Game game(false, "map.tmx");
+	Game game = Game(false, "map.tmx");
 	Net::Server server(45612, 45612, &game);
 	server.poll();
 

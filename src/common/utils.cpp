@@ -20,8 +20,6 @@ sf::Packet& operator>>(sf::Packet& packet,  sf::Vector2<int>& vec2) {
 	packet >> vec2.x >> vec2.y;
 	if(!packet) {
 		cout << "Packet error : sf::Vector2 deserialization" << endl;
-	} else {
-		cout << vec2.x << ", " << vec2.y << endl;
 	}
 	return packet;
 }
@@ -46,8 +44,6 @@ sf::Packet& operator>>(sf::Packet& packet, sf::Vector3<double>& vec3) {
 	packet >> vec3.x >> vec3.y >> vec3.z;
 	if(!packet) {
 		cout << "Packet error : sf::Vector3 deserialization" << endl;
-	} else {
-		cout << "vec3 :" <<vec3.x << ", " << vec3.y << ", " << vec3.z << endl;
 	}
 	return packet;
 }
@@ -60,8 +56,6 @@ sf::Packet& operator>>(sf::Packet& packet, Vertex& vertex) {
 	packet >> vertex.coordinates >> vertex.textCoords >> vertex.normals;
 	if(!packet) {
 		cout << "Packet error : Vertex deserialization" << endl;
-	} else {
-		cout << "coordinates : " << vertex.coordinates.x << ", " << vertex.coordinates.y << ", " << vertex.coordinates.z << endl;
 	}
 	return packet;
 }

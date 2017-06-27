@@ -2,7 +2,6 @@
 // Include GLEW
 #include <GL/glew.h>
 
-
 // Include GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -23,9 +22,23 @@
 #include "mesh.h"
 #include "utils/utils.h"
 
+using namespace std;
+
+Model::Model() {}
+
+Model::Model(map<int, Mesh> meshes, map<int, Texture> textures, glm::vec3 position) {
+	this->mPosition = position;
+	this->loadModel(meshes, textures);
+}
+
+Model::Model(std::string path, glm::vec3 position) {
+		this->loadModel(path);
+		this->mPosition = position;
+}
+
 void Model::draw(Shader shad) {
 	for(int i = 0; i < this->meshes.size(); i++)
-		this->meshes[i].draw(shad);
+		this->meshes[i].drawWithIndices(shad);
 }
 
 void Model::loadModel(std::string path) {
@@ -40,6 +53,19 @@ void Model::loadModel(std::string path) {
 	this->processNode(scene->mRootNode, scene);
 }
 
+//TODO complete this method
+//int in meshes map is the index of the texture to be used in the textures vectors
+void Model::loadModel(map<int, Mesh> meshes, map<int, Texture> textures) {
+	for(map<int, Mesh>::iterator it = meshes.iterator; it != meshes.end(); it++) {
+		vector<Texture> meshTextures; //textures that belong to the mesh with id meshID
+		int meshID = it->first;
+		for(map<int, Texture>::iterator it = textures.iterator; it != textures.end(); it++) {
+
+		}
+	}
+}
+
+
 void Model::processNode(aiNode* node, const aiScene* scene) {
 	for(int i = 0; i < node->mNumMeshes; i++) {
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
@@ -50,6 +76,7 @@ void Model::processNode(aiNode* node, const aiScene* scene) {
 	}
 }
 
+//Extract all data(vertices, indices, textures) from aiMesh and return Mesh object (which has a renderer)
 Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 	std::vector<MeshVertex> vertices;
 	std::vector<GLuint> indices;
@@ -58,12 +85,14 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 	for(int i = 0; i < mesh->mNumVertices; i++) {
 		MeshVertex vertex;
 
+		//add vertices
 		glm::vec3 vector;
 		vector.x = mesh->mVertices[i].x;
 		vector.y = mesh->mVertices[i].y;
 		vector.z = mesh->mVertices[i].z;
 		vertex.Position = vector;
 
+		//add normals
 		vector.x = mesh->mNormals[i].x;
 		vector.y = mesh->mNormals[i].y;
 		vector.z = mesh->mNormals[i].z;
@@ -80,6 +109,8 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 		vertices.push_back(vertex);
 	}
 
+	//TODO add boolean in mesh.cpp to allow rendering without indices
+	//add indices
 	for(GLuint i = 0; i < mesh->mNumFaces; i++) {
 		aiFace face = mesh->mFaces[i];
 		for(int j = 0; j < face.mNumIndices; j++) {
@@ -87,6 +118,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 		}
 	}
 
+	//process textures here
 	if(mesh->mMaterialIndex >= 0) {
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 		std::vector<Texture> diffuseMaps = this->loadMaterialTexture(material, aiTextureType_DIFFUSE, "texture_diffuse");
@@ -136,22 +168,23 @@ GLint Model::TextureFromFile(const char *path, std::string directory) {
 
 	GLuint texture;
 	glGenTextures(1, &texture);
-	printOpenGLError();
+	printOglErrors(__FILE__, __LINE__);
 
 	std::cout << "loading image from path " << finalPath << " using Model::TextureFromFile" << std::endl;
 	unsigned char* image = SOIL_load_image(finalPath.c_str(), &width, &height, 0, SOIL_LOAD_RGBA);
 	if(!image) {
 		std::cout << "unable to load image, size : " << sizeof(*image) << std::endl;
 		return -1;
+
 	}
-	printOpenGLError();
+	printOglErrors(__FILE__, __LINE__);
 
 	glBindTexture(GL_TEXTURE_2D, texture);
-	printOpenGLError();
+	printOglErrors(__FILE__, __LINE__);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-	printOpenGLError();
+	printOglErrors(__FILE__, __LINE__);
 	glGenerateMipmap(GL_TEXTURE_2D);
-	printOpenGLError();
+	printOglErrors(__FILE__, __LINE__);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
@@ -159,7 +192,7 @@ GLint Model::TextureFromFile(const char *path, std::string directory) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	SOIL_free_image_data(image);
-	printOpenGLError();
+	printOglErrors(__FILE__, __LINE__);
 
 	return texture;
 }

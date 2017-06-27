@@ -16,10 +16,8 @@
 #include <string>
 
 namespace Rendering {
-	class Renderer;
 
 	namespace UI {
-		class Component;
 
 		class UIManager {
 			public:

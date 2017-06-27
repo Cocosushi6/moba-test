@@ -2,6 +2,8 @@
 #define SRC_MODEL_H
 #include <iostream>
 // Include GLEW
+
+#define GLEW_STATIC
 #include <GL/glew.h>
 
 // Include GLM
@@ -22,10 +24,9 @@
 
 class Model {
 public:
-	Model(std::string path, glm::vec3 position) {
-		this->loadModel(path);
-		this->mPosition = position;
-	}
+	Model();
+	Model(std::map<int, Mesh> vertices, std::map<int, Texture> textures, glm::vec3 position);
+	Model(std::string path, glm::vec3 position);
 	void draw(Shader shader);
 	glm::vec3 getPosition() {
 		return this->mPosition;
@@ -42,8 +43,10 @@ private:
 	glm::vec3 mPosition;
 	//methods
 	void loadModel(std::string path);
+	void loadModel(std::map<int, Mesh> meshes, std::map<int, Texture> texture);
 	void processNode(aiNode* node, const aiScene* scene);
 	Mesh processMesh(aiMesh* mesh, const aiScene* scene);
+	Mesh processMesh(Mesh mesh, std::vector<Texture> textures);
 	std::vector<Texture> loadMaterialTexture(aiMaterial* mat, aiTextureType type, std::string typeName);
 };
 

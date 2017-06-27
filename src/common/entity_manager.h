@@ -10,6 +10,7 @@ namespace Objects {
 	class GameEntityManager {
 		public:
 			GameEntityManager(int lastID = 0);
+			~GameEntityManager();
 			int attribID();
 			void addEntity(int id, Entities::Entity* ent);
 			Entities::Entity* getEntity(int id) throw (std::string);

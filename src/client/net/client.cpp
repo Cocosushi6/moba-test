@@ -68,15 +68,11 @@ bool Client::connect() {
 	gamePacket >> descriptor;
 	if (descriptor == "INIT") {
 		cout << "received init packet" << endl;
-		Game newGame;
 		Client::checkPacket(gamePacket);
-		//TODO solve error here (not working)
-		if (!(gamePacket >> newGame)) {
+		if (!(gamePacket >> *localGame)) {
 			cout << "Client.cpp : Error while deserializing game data and id at initialisation (PacketParser) " << endl;
 			return false;
 		}
-		*localGame = newGame;
-		localGame->printData();
 		cout << "Game data received from server" << endl;
 	} else {
 		cout << "unknown descriptor " << descriptor << endl;

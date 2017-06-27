@@ -20,7 +20,7 @@ struct MeshVertex { // A point in the world
 
 struct Texture {
 	GLuint id;
-	std::string type; //specular, diffuse, etc.
+	std::string type; //specular or diffuse
 	std::string path;
 };
 
@@ -30,8 +30,10 @@ public:
 	std::vector<GLuint> indices; //indices for EBOs
 	std::vector<Texture> textures; //Texture coordinates & al
 
+	Mesh(std::vector<MeshVertex> pVertices);
 	Mesh(std::vector<MeshVertex> pVertices, std::vector<GLuint> indices, std::vector<Texture> textures);
-	void draw(Shader shad);
+	void drawWithIndices(Shader shad);
+	void drawWithoutIndices(Shader shad);
 private:
 	GLuint VAO, VBO, EBO;
 	void setupMesh();

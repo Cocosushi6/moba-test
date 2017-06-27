@@ -15,29 +15,21 @@
 namespace World {
 	class GameMap;
 
-	//number is defined for conversion to int
-	enum TileType {
-		GRASS=1,
-		PATH=2,
-		TREE=3,
-		ROCK=4
-	};
-
 	class Tile {
 		public:
-			Tile(int x, int y, int layerZ, TileType type, Quad verticesCoordinates, int uniqueID, int size = 16, bool solid = false);
+			Tile(int x, int y, int layerZ, std::string type, Quad verticesCoordinates, int uniqueID, int size = 16, bool solid = false);
 			Tile();
 			Quad getCoordinates();
 			sf::Vector2<int> getWorldPosition();
 			void setSolid(bool solid);
 			bool isSolid();
-			TileType getTileType();
+			std::string getTileType();
 			int getUniqueID();
 			int getLayerZ();
 			int getSize();
 			void setLayerZ(int layerZ);
 			void setSize(int size = 16);
-			void setType(TileType type);
+			void setType(std::string type);
 			void setUniqueId(int uniqueId);
 			void setVerticesCoordinates(const Quad& verticesCoordinates);
 			void setWorldPosition(const sf::Vector2<int>& worldPosition);
@@ -50,7 +42,7 @@ namespace World {
 			int layerZ;
 			int size = 16;
 			bool solid = false;
-			TileType type;
+			std::string type;
 			int uniqueID;
 			Quad verticesCoordinates; //coordinates for every corner of the tile (for later calculations)
 	};
@@ -60,6 +52,7 @@ namespace World {
 			explicit MapGrid(GameMap *map, int layerNumber); //load this one by getting Map's pathToTmx file with getter
 			explicit MapGrid(std::string data, GameMap *map, int layerNumber);
 			MapGrid(GameMap *map);
+			~MapGrid();
 			int parseMap();
 			int getLayer();
 			std::vector<std::vector<Tile>> getTiles();
@@ -80,19 +73,23 @@ namespace World {
 			explicit GameMap(bool remote, MapGrid data);
 			GameMap(GameMap &map);
 			GameMap();
+			~GameMap();
+			void registerTileType(std::string type);
+			std::string intToTileType(int i);
+			std::vector<std::string> getTileTypes();
 			std::string getMapPath();
 			MapGrid* getMapGrid();
+			bool isRemote();
 		private:
+			void initBasicTileTypes();
 			bool remote = false;
 			std::string path;
 			MapGrid *grid;
 			bool initDone = false;
+			std::vector<std::string> tileTypes;
 	};
 
 }
-
-sf::Packet& operator<<(sf::Packet& packet, const World::TileType& type);
-sf::Packet& operator>>(sf::Packet& packet, World::TileType& type);
 
 sf::Packet& operator<<(sf::Packet& packet,  World::MapGrid& grid);
 sf::Packet& operator>>(sf::Packet& packet, World::MapGrid& grid);

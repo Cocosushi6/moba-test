@@ -19,13 +19,25 @@ void Camera::processKeyboard(CameraMovement movement, GLfloat delta) {
 	case RIGHT :
 		cameraPos += glm::normalize(glm::cross(cameraUp, cameraFront)) * velocity;
 		break;
-	case UP :
-		cameraPos += cameraUp;
-		break;
-	case DOWN :
-		cameraPos -= cameraUp;
 	}
+	checkBounds();
 	update_vectors();
+}
+
+void Camera::checkBounds() {
+	//Check the camera doesn't get out of bounds
+	if(cameraPos.x < 0) {
+		cameraPos.x = 0;
+	}
+	if((cameraPos.x / DEFAULT_TILE_XWIDTH) > DEFAULT_MAP_TILEWIDTH) {
+		cameraPos.x = DEFAULT_MAP_TILEWIDTH / DEFAULT_TILE_XWIDTH;
+	}
+	if(cameraPos.z < 0) {
+		cameraPos.z = 0;
+	}
+	if(cameraPos.z / DEFAULT_TILE_ZHEIGHT > DEFAULT_MAP_TILEHEIGHT) {
+		cameraPos.z = DEFAULT_MAP_TILEHEIGHT / DEFAULT_TILE_ZHEIGHT;
+	}
 }
 
 void Camera::processScroll(GLfloat yoffset) {
@@ -66,6 +78,12 @@ void Camera::processMouse(GLfloat xpos, GLfloat ypos) {
 
 void Camera::udpate() {
 	//follow focused entity if it isn't NULL and camera is told to follow an Entity
+	if(isFocused && focusEnt != NULL) {
+		float x = focusEnt->getMapX() - SCREEN_WIDTH / 2;
+		float z = focusEnt->getMapY() - SCREEN_HEIGHT / 2;
+		cameraPos.x = x / DEFAULT_TILE_XWIDTH;
+		cameraPos.z = z / DEFAULT_TILE_ZHEIGHT;
+	}
 }
 
 //updateVectors generates the cameraFront vector (from values of yaw & pitch), which is used when moving.

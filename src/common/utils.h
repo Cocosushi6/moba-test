@@ -18,8 +18,8 @@ struct InputState {
 
 struct Vertex {
 	sf::Vector3<double> coordinates;
-	sf::Vector3<double> textCoords;
-	sf::Vector2<double> normals;
+	sf::Vector3<double> normals;
+	sf::Vector2<double> textCoords;
 };
 
 //A square with 4 vertices (using EBOs)
@@ -42,5 +42,6 @@ sf::Packet& operator<<(sf::Packet& packet, const Quad& quad);
 sf::Packet& operator>>(sf::Packet& packet, Quad& quad);
 std::vector<std::string> split(std::string s, char delim);
 void printQuad(Quad quad);
+
 
 #endif

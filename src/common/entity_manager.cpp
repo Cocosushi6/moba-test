@@ -11,6 +11,15 @@ using namespace std;
 
 Objects::GameEntityManager::GameEntityManager(int lastID) : lastID(lastID) {}
 
+Objects::GameEntityManager::~GameEntityManager() {
+	for(map<int, Entities::Entity*>::iterator it = entities.begin(); it != entities.end(); it++) {
+		removeEntity(it->first);
+	}
+	for(map<int, Objects::Object*>::iterator it = objects.begin(); it != objects.end(); it++) {
+		removeObject(it->first);
+	}
+}
+
 int GameEntityManager::attribID() {
 	while(std::find(ids.begin(), ids.end(), lastID) != ids.end()) {
 		lastID++;

@@ -5,7 +5,4 @@ enum ClientState {
 	CONNECTMENU, INITIALISING, INGAME, MENU
 };
 
-
-
-
 #endif /* SRC_CLIENT_UTILS_UTILS_H_ */

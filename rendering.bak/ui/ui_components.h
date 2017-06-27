@@ -8,14 +8,9 @@
 #ifndef SRC_CLIENT_RENDERING_UI_UI_COMPONENTS_H_
 #define SRC_CLIENT_RENDERING_UI_UI_COMPONENTS_H_
 
-#include "../renderer.h"
-#include "ui_manager.h"
-
 #include <SFML/Window.hpp>
 
 namespace Rendering {
-	class Renderer;
-
 	namespace UI {
 		class UIManager;
 

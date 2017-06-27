@@ -1,64 +1,79 @@
+#include <iostream>
+#include <string>
+
 #include "renderer.h"
 #include "ui/ui_manager.h"
 #include "ui/ui_components.h"
+#include "utils/utils.h"
 
-#include <iostream>
-#include <string>
-#include <SFML/Graphics.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
-//OpenGL headers TODO
-Rendering::Renderer::Renderer(sf::RenderWindow *window, Game *game)
-	: window(window), game(game) {
-	this->uiManager = new UI::UIManager(this);
-    this->init();
+#include <SFML/Window.hpp>
+#include <SFML/OpenGL.hpp>
+
+using namespace Rendering;
+using namespace std;
+
+Renderer::Renderer(sf::Window* window, Game* game) : window(window), game(game) {
+	mapRenderer = new MapRenderer(this, game->getMap());
+	uiManager = new UI::UIManager(this);
+	cam = new Camera();
+
 }
 
-Rendering::Renderer::~Renderer() {
+Renderer::~Renderer() {
+
+
+	delete mapRenderer;
 	delete uiManager;
 }
 
-void Rendering::Renderer::renderMap() {
-	World::GameMap* map = game->getMap();
-	
-}
-
-void Rendering::Renderer::init() {
-	//All models of all entities are loaded here with addEntityModel
-}
-
-void Rendering::Renderer::addEntityModel(int id, Model *model) {
-        entityModels[id] = model;
-}
-
-void Rendering::Renderer::drawLoadingScreen(std::string message) {
-	sf::Font font;
-	if(!font.loadFromFile("DejaVuSans.ttf")) {
-		std::cout << "Couldn't load basic font DejaVuSans.ttf. Things will soon get ugly around here. " << std::endl;
-		return;
+int Renderer::loadShader(string identifier, string vertPath, string fragPath) {
+	for(std::map<string, Shader*>::iterator it = shaders.begin(); it != shaders.end(); it++) {
+		if(it->first == identifier) {
+			cout << "Error while loading new shader : identifier already exists ! Aborting. " << endl;
+			return -1;
+		}
 	}
 
-	sf::Text text;
-	text.setFont(font);
-	text.setString(message);
-	text.setCharacterSize(20);
-	text.setColor(sf::Color::White);
-	text.setStyle(sf::Text::Bold);
-	this->window->draw(text);
-	this->window->display();
+	Shader *shad = new Shader(vertPath.c_str(), fragPath.c_str());
+	if(shad->load() != 0) {
+		cout << "Error while loading new shader : shader creation failed ! " << endl;
+		return -2;
+	}
+	shaders[identifier] = shad;
+	return 0;
 }
 
-//method to be called in while loop
-void Rendering::Renderer::render() {
-	glClear(GL_COLOR_BUFFER_BIT);
+void Renderer::render() {
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	printOglErrors(__FILE__, __LINE__);
 
-	//Do OGL rendering here
-	this->renderMap();
-
-	this->window->pushGLStates();
+	mapRenderer->renderMap();
+	printOglErrors(__FILE__, __LINE__);
+	renderObjects();
+	printOglErrors(__FILE__, __LINE__);
 
 	this->uiManager->renderUI();
 
-	this->window->popGLStates();
+	printOglErrors(__FILE__, __LINE__);
 
 	this->window->display();
+}
+
+void Renderer::renderObjects() {
+
+}
+
+Camera* Renderer::getCamera() {
+	return this->cam;
+}
+
+glm::mat4 Renderer::getProjectionMatrix() {
+	float aspect = (float)window->getSize().x/(float)window->getSize().y;
+	glm::mat4 ret = glm::perspective(glm::radians(cam->getFov()), aspect, 1.0f, 100.0f);
+	return ret;
 }
