@@ -4,7 +4,7 @@
 #include "../../utils.h"
 #include <cmath>
 
-Objects::Entities::Entity::Entity(float mapX, float mapY, float mapZ, int layerZ, std::string name, Game *game, bool remote) : Objects::Object(mapX, mapY, layerZ, name, game, remote) {
+Objects::Entities::Entity::Entity(float mapX, float mapY, float mapZ, int layerZ, std::string name, Game *game, bool remote) : Objects::Object(mapX, mapY, mapZ, layerZ, name, game, remote) {
 
 }
 
@@ -22,14 +22,6 @@ int Objects::Entities::Entity::getLayerZ() const {
 
 void Objects::Entities::Entity::setLayerZ(int layerZ ) {
 	this->layerZ = layerZ;
-}
-
-bool Objects::Entities::Entity::isMoving() const {
-	return moving;
-}
-
-void Objects::Entities::Entity::setMoving(bool moving ) {
-	this->moving = moving;
 }
 
 float Objects::Entities::Entity::getNewX() const {
@@ -76,10 +68,7 @@ Objects::Entities::Player::~Player() {
 }
 
 void Objects::Entities::Player::move(float mapX, float mapY, float mapZ, int layerZ) {
-	if(moving) {
-		float newx = cosf(orientation) * velocity;
-		float newy = sinf(orientation) * velocity;
-	}
+
 }
 
 void Objects::Entities::Player::update(long tickrate) {

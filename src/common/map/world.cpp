@@ -101,8 +101,8 @@ GameMap::~GameMap() {
 void GameMap::initBasicTileTypes() {
 	this->registerTileType("grass");
 	this->registerTileType("grass");
-	this->registerTileType("grass");
-	this->registerTileType("grass");
+	this->registerTileType("stone");
+	this->registerTileType("stone");
 	cout << "initialised basic tile types" << endl;
 }
 

@@ -71,6 +71,8 @@ int main_client(std::string serverAddress, int port) {
 	}
 
 	static Rendering::Renderer renderer(&window, &game);
+	InputManager inputManager(&game, &client, &renderer);
+
 	sf::Clock deltaTimer;
 	initDone = true;
 
@@ -87,26 +89,7 @@ int main_client(std::string serverAddress, int port) {
 			}
 		}
 		client.poll();
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-			renderer.getCamera()->processKeyboard(CameraMovement::BACK, delta.asSeconds());
-			cout << "DOWN key pressed" << endl;
-		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-			renderer.getCamera()->processKeyboard(CameraMovement::FORWARD, delta.asSeconds());
-		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-			renderer.getCamera()->processKeyboard(CameraMovement::LEFT, delta.asSeconds());
-		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-			renderer.getCamera()->processKeyboard(CameraMovement::RIGHT, delta.asSeconds());
-		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-			renderer.getCamera()->processKeyboard(CameraMovement::UP, delta.asSeconds());
-		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
-			renderer.getCamera()->processKeyboard(CameraMovement::DOWN, delta.asSeconds());
-		}
-
+		inputManager.processInput(delta);
 		renderer.getCamera()->processMouse(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
 		renderer.render();
 	}

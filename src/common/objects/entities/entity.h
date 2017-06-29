@@ -26,8 +26,6 @@ namespace Objects {
 				void setAngle(float angle = 0);
 				int getLayerZ() const;
 				void setLayerZ(int layerZ = 0);
-				bool isMoving() const;
-				void setMoving(bool moving = false);
 				float getNewX() const;
 				void setNewX(float newX = 0);
 				float getNewY() const;
@@ -41,14 +39,12 @@ namespace Objects {
 				int layerZ = 0;
 				float orientation = 0;
 				float velocity = 0;
-				bool moving = false;
 		};
 
 		//basic implementation of Entity
 		class MovingEntity : public Entity {
 			public:
 				MovingEntity(float mapX, float mapY, float mapZ, int layerZ);
-				void update(long tickrate);
 				void move(float mapX, float mapY, float mapZ, int layerZ);
 				~MovingEntity();
 			private:
@@ -57,7 +53,6 @@ namespace Objects {
 		class Player : public Entity {
 			public:
 				Player(float mapX, float mapY, float mapZ, int layerZ, std::string name, Game *game, bool remote);
-				void update(long tickrate);
 				void move(float mapX, float mapY, float mapZ, int layerZ);
 				void useWeapon();
 				void setWeapon(Weapons::Weapon *weapon);
@@ -70,6 +65,10 @@ namespace Objects {
 
 }
 
+sf::Packet& operator<<(sf::Packet& packet, Objects::Entities::Entity &ent);
+sf::Packet& operator>>(sf::Packet& packet, Objects::Entities::Entity &ent);
+sf::Packet& operator<<(sf::Packet& packet, Objects::Entities::Player &pla);
+sf::Packet& operator>>(sf::Packet& packet, Objects::Entities::Player &pla);
 
 
 #endif /* SRC_COMMON_OBJECTS_ENTITIES_ENTITY_H_ */

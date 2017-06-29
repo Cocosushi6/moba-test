@@ -98,6 +98,7 @@ int DataManager::PacketParser::parsePacket(Packet packet) {
 
 				client_ptr newClient(new Net::Client(*currentClient, port));
 				this->m_cManager->setClientForID(clientID, newClient);
+				this->game->getEntityManager()->addEntity(clientID, new Objects::Entities::Player(0, 0, 0, 1, "player" + clientID, this->game, false));
 
 				//new client is now initialised completely
 				cout << "sending back game data to client..." << endl;
